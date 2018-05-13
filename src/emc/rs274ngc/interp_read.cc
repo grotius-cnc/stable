@@ -14,7 +14,6 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <boost/python.hpp>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,6 +27,8 @@
 #include "rs274ngc_return.hh"
 #include "interp_internal.hh"
 #include "rs274ngc_interp.hh"
+#include "rtapi_math.h"
+#include <cmath>
 
 /****************************************************************************/
 
@@ -2701,9 +2702,9 @@ int Interp::read_real_value(char *line,  //!< string: line of RS274/NGC code bei
   else
     CHP(read_real_number(line, counter, double_ptr));
 
-  CHKS(isnan(*double_ptr),
+  CHKS(std::isnan(*double_ptr),
           _("Calculation resulted in 'not a number'"));
-  CHKS(isinf(*double_ptr),
+  CHKS(std::isinf(*double_ptr),
           _("Calculation resulted in 'infinity'"));
 
   return INTERP_OK;

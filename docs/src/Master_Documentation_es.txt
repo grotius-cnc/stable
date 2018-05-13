@@ -56,10 +56,6 @@ include::gui/touchy.txt[]
 
 include::gui/tklinuxcnc.txt[]
 
-include::gui/mini.txt[]
-
-include::gui/keystick.txt[]
-
 :leveloffset: 1
 
 = Programming
@@ -178,6 +174,8 @@ include::drivers/hostmot2.txt[]
 
 include::drivers/motenc.txt[]
 
+include::drivers/mb2hal.txt[]
+
 include::drivers/opto22.txt[]
 
 include::drivers/pico-ppmc.txt[]
@@ -186,7 +184,7 @@ include::drivers/pluto-p.txt[]
 
 include::drivers/servo-to-go.txt[]
 
-include::drivers/shuttlexpress.txt[]
+include::drivers/shuttle.txt[]
 
 include::drivers/gm.txt[]
 

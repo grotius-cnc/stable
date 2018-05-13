@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 #    Gscreen a GUI for linuxcnc cnc controller 
 #    Chris Morley copyright 2012
@@ -15,7 +15,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 """
 # Gscreen is made for running linuxcnc CNC machines
@@ -50,6 +50,7 @@ import gtk
 import gtk.glade
 import gobject
 import hal
+import errno
 import gladevcp.makepins
 from gladevcp.gladebuilder import GladeBuilder
 import pango
@@ -59,6 +60,15 @@ import vte
 import time
 from time import strftime,localtime
 import hal_glib
+
+#--------------------------------------------------------
+# limit number of times err msgs are displayed
+excepthook_msg_ct = 0
+excepthook_msg_ct_max = 10
+
+update_spindle_bar_error_ct = 0
+update_spindle_bar_error_ct_max = 3
+#--------------------------------------------------------
 
 # try to add a notify system so messages use the
 # nice intergrated pop-ups
@@ -150,15 +160,22 @@ def excepthook(exc_type, exc_obj, exc_tb):
     except NameError:
         w = None
     lines = traceback.format_exception(exc_type, exc_obj, exc_tb)
-    m = gtk.MessageDialog(w,
+    global excepthook_msg_ct,excepthook_msg_ct_max
+    excepthook_msg_ct += 1
+    if excepthook_msg_ct < excepthook_msg_ct_max:
+        print "*******************************************************\n",excepthook_msg_ct
+        print "".join(lines)
+        print "*******************************************************\n",excepthook_msg_ct
+    if excepthook_msg_ct < 1:
+        m = gtk.MessageDialog(w,
                 gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                 gtk.MESSAGE_ERROR, gtk.BUTTONS_OK,
                 ("Gscreen encountered an error.  The following "
                 "information may be useful in troubleshooting:\n\n")
                 + "".join(lines))
-    m.show()
-    m.run()
-    m.destroy()
+        m.show()
+        m.run()
+        m.destroy()
 sys.excepthook = excepthook
 
 # constants
@@ -247,7 +264,7 @@ class Data:
         self.highlight_major = False
         self.display_order = (_REL,_DTG,_ABS)
         self.mode_order = (self._MAN,self._MDI,self._AUTO)
-        self.mode_labels = ["Manual Mode","MDI Mode","Auto Mode"]
+        self.mode_labels = [_("Manual Mode"),_("MDI Mode"),_("Auto Mode")]
         self.IPR_mode = False
         self.plot_view = ("p","x","y","y2","z","z2")
         self.task_mode = 0
@@ -545,9 +562,9 @@ class Gscreen:
         units=self.inifile.find("TRAJ","LINEAR_UNITS")
         if units==None:
             # else then the X axis units
-            units=self.inifile.find("AXIS_0","UNITS")
+            units=self.inifile.find("AXIS_X","UNITS")
             if units==None:
-                self.add_alarm_entry(_("No UNITS entry found in [TRAJ] or [AXIS_0] of INI file"))
+                self.add_alarm_entry(_("No UNITS entry found in [TRAJ] or [AXIS_X] of INI file"))
         if units=="mm" or units=="metric" or units == "1.0":
             self.machine_units_mm=1
             conversion=[1.0/25.4]*3+[1]*3+[1.0/25.4]*3
@@ -601,7 +618,14 @@ class Gscreen:
         # check for a local theme gtkrc file
         localtheme = os.path.join(CONFIGPATH,'%s_theme'%self.skinname)
         if os.path.exists(localtheme):
+            print 'local theme path found'
             self.data.local_theme = 'Link to %s_theme'% self.skinname
+            # make ~/.themes - quietly ignore the error if it exists
+            try:
+                os.makedirs(userthemedir)
+            except OSError as exception:
+                if exception.errno != errno.EEXIST:
+                    raise
             # create systemlink because one can't store themes in an arbitrary folder.
             if not os.path.exists(userthemedir+'/%s'%self.data.local_theme):
                 os.symlink(localtheme,userthemedir+'/%s'%self.data.local_theme)
@@ -662,9 +686,9 @@ class Gscreen:
 
         # max velocity settings: more then one place to check
         # This is the maximum velocity of the machine
-        temp = self.inifile.find("TRAJ","MAX_VELOCITY")
+        temp = self.inifile.find("TRAJ","MAX_LINEAR_VELOCITY")
         if temp == None:
-            self.add_alarm_entry(_("No MAX_VELOCITY found in [TRAJ] of the INI file"))
+            self.add_alarm_entry(_("No MAX_LINEAR_VELOCITY found in [TRAJ] of the INI file"))
             temp = 1.0
         self.data._maxvelocity = float(temp)
 
@@ -1182,7 +1206,7 @@ class Gscreen:
         """ 
         self.widgets.show_offsets.set_active( self.data.show_offsets )
         self.widgets.gremlin.show_offsets = self.data.show_offsets
-        self.widgets.grid_size.set_value(self.data.grid_size) 
+        self.widgets.grid_size.set_value(self.data.grid_size)
         self.widgets.gremlin.grid_size = self.data.grid_size
         self.widgets.gremlin.set_property('view',self.data.plot_view[0])
         self.widgets.gremlin.set_property('metric_units',(self.data.dro_units == self.data._MM))
@@ -1219,7 +1243,7 @@ class Gscreen:
             expects widget to be named statusbar1
         """
         self.statusbar_id = self.widgets.statusbar1.get_context_id("Statusbar1")
-        self.homed_status_message = self.widgets.statusbar1.push(1,"Ready For Homing")
+        self.homed_status_message = self.widgets.statusbar1.push(1,_("Ready For Homing"))
 
     def init_entry(self):
         return
@@ -1280,10 +1304,10 @@ class Gscreen:
         model = self.widgets.theme_choice.get_model()
         model.clear()
         # add the default system theme
-        model.append(("Follow System Theme",))
+        model.append((_("Follow System Theme"),))
         # if there is a local custom theme add it
         if self.data.local_theme:
-            model.append(("Local Config Theme",))
+            model.append((_("Local Config Theme"),))
         themes = []
         # add user themes
         if os.path.exists(userthemedir):
@@ -1724,7 +1748,11 @@ class Gscreen:
             The search text string is set by text entry widget 'search_entry'.
             This is a callback function called by any named widget
         """
-        self.widgets.gcode_view.text_search(direction=True,mixed_case=self.widgets.ignorecase_checkbutton.get_active(),
+        try:
+            CASE = self.widgets.ignorecase_checkbutton.get_active()
+        except:
+            CASE = True
+        self.widgets.gcode_view.text_search(direction=True,mixed_case=CASE,
                                 text=self.widgets.search_entry.get_text())
 
     def search_bwd(self,widget):
@@ -1734,7 +1762,11 @@ class Gscreen:
             The search text string is set by text entry widget 'search_entry'.
             This is a callback function called by any named widget
         """
-        self.widgets.gcode_view.text_search(direction=False,mixed_case=self.widgets.ignorecase_checkbutton.get_active(),
+        try:
+            CASE = self.widgets.ignorecase_checkbutton.get_active()
+        except:
+            CASE = True
+        self.widgets.gcode_view.text_search(direction=False,mixed_case=CASE,
                                 text=self.widgets.search_entry.get_text())
 
     def replace_text(self,widget):
@@ -1746,9 +1778,17 @@ class Gscreen:
             The replace all option is set by widget 'replaceall_checkbutton' state
             This is a callback function called by any named widget
         """
-        self.widgets.gcode_view.replace_text_search(direction=True,mixed_case=self.widgets.ignorecase_checkbutton.get_active(),
+        try:
+            CASE = self.widgets.ignorecase_checkbutton.get_active()
+        except:
+            CASE = True
+        try:
+            RE_ALL = self.widgets.replaceall_checkbutton.get_active()
+        except:
+            RE_ALL = False
+        self.widgets.gcode_view.replace_text_search(direction=True,mixed_case=CASE,
                                 text=self.widgets.search_entry.get_text(),re_text=self.widgets.search_entry1.get_text(),
-                                replace_all=self.widgets.replaceall_checkbutton.get_active())
+                                replace_all=RE_ALL)
 
     def undo_edit(self,widget):
         """This will undo one level of change in the gcode_view.
@@ -1799,7 +1839,11 @@ class Gscreen:
             method = self.keylookup.convert(keyname)
             if method:
                 try:
-                    return self.handler_instance[method](state,SHIFT,CNTRL,ALT)
+                    try:
+                        return self.handler_instance[method](state,SHIFT,CNTRL,ALT)
+                    except:
+                        self.show_try_errors()
+                        return self.handler_instance.keybindings[method](state,SHIFT,CNTRL,ALT)
                 except:
                     self.show_try_errors()
                     return self[method](state,SHIFT,CNTRL,ALT) 
@@ -2481,12 +2525,12 @@ class Gscreen:
             self.emc.estop_reset(1)
         elif not self.data.machine_on:
             self.emc.machine_on(1)
-            self.widgets.on_label.set_text("Machine On")
+            self.widgets.on_label.set_text(_("Machine On"))
             self.add_alarm_entry(_("Machine powered on"))
         else:
             self.emc.machine_off(1)
             self.emc.estop(1)
-            self.widgets.on_label.set_text("Machine Off")
+            self.widgets.on_label.set_text(_("Machine Off"))
             self.add_alarm_entry(_("Machine Estopped!"))
 
     def on_calc_clicked(self,widget):
@@ -2966,57 +3010,71 @@ class Gscreen:
 
 
     def launch_keyboard(self,args="",x="",y=""):
-        """This is a function to show 'Onboard' virtual keyboard if available
+        """This is a function to show 'Onboard' or 'matchbox' virtual keyboard if available.
             check for key_box widget - if there is, and embedded flag, embed Onboard in it.
             else launch an independant Onboard inside a dialog so it works in fullscreen
             (otherwise it hides when main screen is touched)
             else error message
         """
-        print args,x,y
+        def load_keyboard():
+            if os.path.isfile( "/usr/bin/onboard" ):
+                self.data.ob = subprocess.Popen( ["onboard", "--xid", args, x, y],
+                                                   stdin = subprocess.PIPE,
+                                                   stdout = subprocess.PIPE,
+                                                   close_fds = True )
+                return True
+            elif os.path.isfile( "/usr/bin/matchbox-keyboard" ):
+                self.data.ob = subprocess.Popen( ["matchbox-keyboard", "--xid"],
+                                                   stdin = subprocess.PIPE,
+                                                   stdout = subprocess.PIPE,
+                                                   close_fds = True )
+                return True
+            else:
+                print _("Error with launching on-screen keyboard program -can't find program.")
+                self.add_alarm_entry(_("Error with launching on-screen keyboard program -can't find program."))
+                return False
+
         def dialog_keyboard():
             if self.data.keyboard_dialog:
                 self.data.keyboard_dialog.show()
                 self.data.ob = True
             else:
-                self.data.ob = subprocess.Popen(["onboard","--xid",args,x,y],
-                                       stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE,
-                                       close_fds=True)
-                sid = self.data.ob.stdout.readline()
-                self.data.keyboard_dialog = gtk.Dialog(_("Keyboard"),
-                           self.widgets.window1,
-                           gtk.DIALOG_DESTROY_WITH_PARENT)
-                self.data.keyboard_dialog.set_accept_focus(False)
-                self.data.keyboard_dialog.set_deletable(False)
-                socket = gtk.Socket()
-                socket.show()
-                self.data.keyboard_dialog.vbox.add(socket)
-                socket.add_id(long(sid))
-                self.data.keyboard_dialog.parse_geometry("800x200")
-                self.data.keyboard_dialog.show_all()
-                self.data.keyboard_dialog.connect("destroy", self.keyboard_return)
+                if load_keyboard():
+                    sid = self.data.ob.stdout.readline()
+                    self.data.keyboard_dialog = gtk.Dialog(_("Keyboard"),
+                               self.widgets.window1,
+                               gtk.DIALOG_DESTROY_WITH_PARENT)
+                    self.data.keyboard_dialog.set_accept_focus(False)
+                    self.data.keyboard_dialog.set_deletable(False)
+                    socket = gtk.Socket()
+                    socket.show()
+                    self.data.keyboard_dialog.vbox.add(socket)
+                    socket.add_id(long(sid))
+                    self.data.keyboard_dialog.parse_geometry("800x200")
+                    self.data.keyboard_dialog.show_all()
+                    self.data.keyboard_dialog.connect("destroy", self.keyboard_return)
 
         try:
             if self.widgets.key_box and self.data.embedded_keyboard:
-                self.widgets.rightside_box.show()
+                try:
+                    self.widgets.rightside_box.show()
+                except:
+                    pass
                 self.widgets.key_box.show()
-                self.data.ob = subprocess.Popen(["onboard","--xid",args,x,y],
-                                       stdin=subprocess.PIPE,
-                                       stdout=subprocess.PIPE,
-                                       close_fds=True)
-                sid = self.data.ob.stdout.readline()
-                print"keyboard", sid # skip header line
-                socket = gtk.Socket()
-                socket.show()
-                self.widgets.key_box.add(socket)
-                socket.add_id(long(sid))
+                if load_keyboard():
+                    sid = self.data.ob.stdout.readline()
+                    print"keyboard", sid # skip header line
+                    socket = gtk.Socket()
+                    socket.show()
+                    self.widgets.key_box.add(socket)
+                    socket.add_id(long(sid))
             else:
                 dialog_keyboard()
-        except:
+        except Exception, e:
             try:
                 dialog_keyboard()
             except:
-                print _("Error with launching 'Onboard' on-screen keyboard program")
+                print _("Error with launching 'Onboard' on-screen keyboard program %s"%e)
 
     # seems the only way to trap the destroy signal
     def keyboard_return(self,widget):
@@ -3027,7 +3085,7 @@ class Gscreen:
     # else kill it and if needed hide the key_box
     def kill_keyboard(self):
         if not self.data.keyboard_dialog == None:
-            self.data.keyboard_dialog.hide()
+            self.data.keyboard_dialog.destroy()
             self.data.ob = None
             return
         try:
@@ -4387,7 +4445,12 @@ class Gscreen:
         try:
             self.widgets.s_display2.set_value(abs(self.data.spindle_speed))
         except:
-            self.show_try_errors()
+            global update_spindle_bar_error_ct,update_spindle_bar_error_ct_max
+            if update_spindle_bar_error_ct < update_spindle_bar_error_ct_max:
+                print "%2d/%2d update_spindle_bar error"%(
+                       update_spindle_bar_error_ct,update_spindle_bar_error_ct_max)
+                self.show_try_errors()
+                update_spindle_bar_error_ct += 1
 
     def update_dro(self):
         # DRO
@@ -4479,7 +4542,10 @@ class Gscreen:
         systemlabel = (_("Machine"),"G54","G55","G56","G57","G58","G59","G59.1","G59.2","G59.3")
         tool = str(self.data.tool_in_spindle)
         if tool == None: tool = "None"
-        self.widgets.system.set_text(("Tool %s     %s"%(tool,systemlabel[self.data.system])))
+        self.widgets.system.set_text((_("Tool %(t)s     %(l)s")%
+             ({'t':tool,
+               'l':systemlabel[self.data.system]
+             })))
 
     def update_coolant_leds(self):
         # coolant
@@ -4508,12 +4574,12 @@ class Gscreen:
     def update_jog_rate_label(self):
         rate = round(self.status.convert_units(self.data.jog_rate),2)
         if self.data.dro_units == self.data._MM:
-            text = "%4.2f mm/min"% (rate)
+            text = _("%4.2f mm/min")% (rate)
         else:
-            text = "%3.2f IPM"% (rate)
+            text = _("%3.2f IPM")% (rate)
         self.widgets.jog_rate.set_text(text)
         try:
-            text = "%4.2f DPM"% (self.data.angular_jog_rate)
+            text = _("%4.2f DPM")% (self.data.angular_jog_rate)
             self.widgets.angular_jog_rate.set_text(text)
         except:
             pass
@@ -4522,15 +4588,19 @@ class Gscreen:
         # Mode / view
         modenames = self.data.mode_labels
         time = strftime("%a, %d %b %Y  %I:%M:%S %P    ", localtime())
-        self.widgets.mode_label.set_label( "%s   View -%s               %s"% (modenames[self.data.mode_order[0]],self.data.plot_view[0],time) )
+        self.widgets.mode_label.set_label( _("%(n)s   View -%(v)s               %(t)s")%
+              ({'n':modenames[self.data.mode_order[0]],
+                'v':self.data.plot_view[0],
+                't':time
+              }))
 
     def update_units_button_label(self):
         label = self.widgets.metric_select.get_label()
         data = self.data.dro_units
-        if data and not label == " mm ":
-            temp = " mm "
-        elif data == 0 and not label == "Inch":
-            temp = "Inch"
+        if data and not label == _(" mm "):
+            temp = _(" mm ")
+        elif data == 0 and not label == _("Inch"):
+            temp = _("Inch")
         else: return
         self.widgets.metric_select.set_label(temp)
 

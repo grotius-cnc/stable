@@ -3,10 +3,15 @@ LinuxCNC V{lversion}, {localdate}
 =================================
 :lang: en
 
-Contents
-========
+= Contents
 
 :masterdir: {indir}
+
+:leveloffset: 0
+
+= About LinuxCNC
+
+:leveloffset: 1
 
 = Introduction
 
@@ -14,9 +19,11 @@ image::common/images/emc2-intro.*[]
 
 include::common/overleaf.txt[]
 
-The LinuxCNC History
+= LinuxCNC History
 
 include::common/emc-history.txt[]
+
+:leveloffset: 0
 
 = Using LinuxCNC
 
@@ -63,10 +70,6 @@ include::gui/touchy.txt[]
 include::gui/gscreen.txt[]
 
 include::gui/tklinuxcnc.txt[]
-
-include::gui/mini.txt[]
-
-include::gui/keystick.txt[]
 
 :leveloffset: 1
 
@@ -160,6 +163,8 @@ include::gui/gladevcp.txt[]
 
 :leveloffset: 2
 
+include::gui/panelui.txt[]
+
 include::gui/halui.txt[]
 
 include::hal/halui-examples.txt[]
@@ -184,6 +189,8 @@ include::drivers/hostmot2.txt[]
 
 include::drivers/motenc.txt[]
 
+include::drivers/mb2hal.txt[]
+
 include::drivers/opto22.txt[]
 
 include::drivers/pico-ppmc.txt[]
@@ -192,7 +199,7 @@ include::drivers/pluto-p.txt[]
 
 include::drivers/servo-to-go.txt[]
 
-include::drivers/shuttlexpress.txt[]
+include::drivers/shuttle.txt[]
 
 include::drivers/gm.txt[]
 
@@ -259,17 +266,21 @@ include::hal/comp.txt[]
 include::hal/halmodule.txt[]
 
 
-:leveloffset: 1
+:leveloffset: 0
 
 = Advanced Topics
 
-:leveloffset: 2
+:leveloffset: 1
 
 include::motion/kinematics.txt[]
 
+include::motion/5-axis-kinematics.txt[]
+
 include::motion/pid-theory.txt[]
 
-:leveloffset: 1
+include::motion/external-offsets.txt[]
+
+include::code/rs274.txt[]
 
 :leveloffset: 0
 

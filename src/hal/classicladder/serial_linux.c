@@ -19,7 +19,7 @@
 
 /* You should have received a copy of the GNU Lesser General Public */
 /* License along with this library; if not, write to the Free Software */
-/* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA */
+/* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 #include <termios.h>
 #include <stdio.h>
@@ -236,7 +236,7 @@ if ( recep_descrip>0 )
 {
 		if ( ModbusDebugLevel>=2 )
 			printf("Serial reading...\n");
-			NbrCarsReceived = read(fd,Buff,MaxBuffLength);
+		NbrCarsReceived = read(fd,Buff,MaxBuffLength);
 		if ( ModbusDebugLevel>=2 )
 			printf("%d chars found\n", NbrCarsReceived);
 }

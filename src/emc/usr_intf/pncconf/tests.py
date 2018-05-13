@@ -1,4 +1,4 @@
-#!/usr/bin/python2.4
+#!/usr/bin/env python2.4
 # -*- encoding: utf-8 -*-
 #    This is pncconf, a graphical configuration editor for LinuxCNC
 #    Chris Morley copyright 2009
@@ -17,7 +17,7 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with this program; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USAimport os
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 import os
 import gtk
 import time
@@ -652,7 +652,7 @@ But there is not one in the machine-named folder.."""),True)
                 ending = ".value"
                 pwminvertlist = self.a.pwmgen_invert_pins(pwm_sig)
                 for i in pwminvertlist:
-                    halrun.write("setp    "+i+".invert_output true")
+                    halrun.write("setp    "+i+".invert_output true\n")
             else: # sserial PWM
                 pwm_enable = self.d.make_pinname(pwm_sig,False,True) # get prefix only
                 halrun.write("net enable %s \n"%  (pwm_enable +"analogena"))
@@ -676,7 +676,7 @@ But there is not one in the machine-named folder.."""),True)
                 self.scale = get_value(w[axis + "stepscale"]) * 1
             stepinvertlist = self.a.stepgen_invert_pins(step_sig)
             for i in stepinvertlist:
-                halrun.write("setp    "+i+".invert_output true")
+                halrun.write("setp    "+i+".invert_output true\n")
             halrun.write("setp %s.step_type 0 \n"% (self.step_signalname))
             halrun.write("setp %s.control-type 1 \n"% (self.step_signalname))
             halrun.write("setp %s.position-scale %f \n"% (self.step_signalname,self.scale))

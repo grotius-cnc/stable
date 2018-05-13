@@ -79,13 +79,13 @@ class _EMC_ActionBase(_HalWidgetBase):
 
     def is_all_homed(self):
         self.stat.poll()
-        axis_count = count = 0
+        axis_count = homed_count = 0
         for i,h in enumerate(self.stat.homed):
             if h:
-                count +=1
+                if self.stat.axis_mask & (1<<i): homed_count +=1
             if self.stat.axis_mask & (1<<i) == 0: continue
             axis_count += 1
-        if count == axis_count:
+        if homed_count == axis_count:
             return True
         return False
 
@@ -441,7 +441,8 @@ class FloatComp:
     def __init__(self, comp):
         self.comp = comp
     def __getitem__(self, k):
-        return float(self.comp[k])
+        v = float(self.comp[k])
+        return "%f" % v
 
 class EMC_Action_MDI(_EMC_Action):
     __gtype_name__ = 'EMC_Action_MDI'

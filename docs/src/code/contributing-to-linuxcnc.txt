@@ -22,11 +22,7 @@ The two main ways that project developers communicate with each other are:
 
 == The LinuxCNC Source Forge project
 
-We use Source Forge for mailing lists and bug tracking.
-
-Our SF mailing lists are here: http://sourceforge.net/p/emc/mailman/
-
-Our SF bug tracker is here: http://sourceforge.net/p/emc/bugs/
+We use Source Forge for mailing lists: http://sourceforge.net/p/emc/mailman/
 
 
 == The git Revision Control System
@@ -36,29 +32,24 @@ git footnote:[http://git-scm.com/].
 
 === LinuxCNC official git repo
 
-The official LinuxCNC git repo is at http://git.linuxcnc.org.
+The official LinuxCNC git repo is at http://github.com/linuxcnc/linuxcnc/
 
-The anonymous clone command is:
+Anyone can get a read-only copy of the LinuxCNC source tree via git:
 
-`git clone git://git.linuxcnc.org/git/linuxcnc.git linuxcnc-dev`
+`git clone https://github.com/linuxcnc/linuxcnc linuxcnc-dev`
 
-If you are a registered developer with push access, the ssh clone
-command is:
+If you are a developer with push access, then follow github's instructions
+for setting up a repository that you can push from.
 
-`git clone ssh://$YOU@git.linuxcnc.org/git/linuxcnc.git linuxcnc-dev`
-
-Note that both the clone commands put the local LinuxCNC repo in a
+Note that the clone command put the local LinuxCNC repo in a
 directory called `linuxcnc-dev`, instead of the default `linuxcnc`.
 This is because the LinuxCNC software by default expects configs and
 G-code programs in a directory called `$HOME/linuxcnc`, and having the
 git repo there too is confusing.
 
-=== LinuxCNC on github
-
-There is a regularly updated git clone on github:
-https://github.com/jepler/linuxcnc-mirror
-
-You can submit pull requests here.
+Issues and pull requests are welcome on github:
+https://github.com/LinuxCNC/linuxcnc/issues
+https://github.com/LinuxCNC/linuxcnc/pulls
 
 === Use of git in the LinuxCNC project
 
@@ -120,17 +111,26 @@ like this:
 
 * Clone the git repo
 
-* Commit the changes you desire to a local branch
+* Make your changes in a local branch, making sure you "sign off" your commits
+  according to our signed-off-by policy (see below).
 
-* Share your changes with the other project developers in one of two ways:
+* Adding documentation and tests is an important part of adding a new
+  feature.  Otherwise, others won't know how to use your feature, and
+  if other changes break your feature it can go unnoticed without a test.
+
+* Share your changes with the other project developers in one of these ways:
+
+** Push your branch to github and create a github pull request to
+   https://github.com/linuxcnc/linuxcnc (this requires a github account)
 
 ** Push your branch to a publicly visible git repo (such as github,
-   bitbucket, your own publicly-accessible server, etc), or
+   bitbucket, your own publicly-accessible server, etc) and share that
+   location on the emc-developers mailing list, or
 
-** Email your commits to the emc-developers mailing list (using `git
-   format-patch`)
+** Email your commits to the emc-developers mailing list (use `git
+   format-patch` to create the patches)
 
-* Champion your patch
+* Advocate for your patch
 
 ** Explain what problem it addresses and why it should be included
    in LinuxCNC
@@ -140,28 +140,6 @@ like this:
 ** It is not uncommon for a patch to go through several revisions before
    it is accepted.
 
-
-== Signed-off-by policy
-
-To improve tracking of who did what, we use the "sign-off" procedure
-introduced by the Linux kernel.  The sign-off is a simple line at the
-end of the explanation for the patch, which certifies that you wrote
-it or otherwise have the right to pass it on as an open-source patch.
-The rules are pretty simple: if you can certify the Developer's
-Certificate of Origin 1.1 with GPLv2+ clause, then you just add a line
-saying
-
-----
-Signed-off-by: Random J Developer <random@developer.example.org>
-----
-
-This line can be automatically added by git if you
-run the git-commit command with the -s option.
-
-For more information, see `docs/SubmittingPatches` and
-`docs/developer-certificate-of-origin` in the source tree.  By policy,
-commits authored after 2014-09-29 must bear a signed-off-by line or they
-will be rejected by git.linuxcnc.org.
 
 == git configuration
 

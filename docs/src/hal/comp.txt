@@ -1,4 +1,4 @@
-[[cha:hal-component-generator]] (((HAL Component Generator)))
+[[cha:hal-component-generator]]
 
 = The HAL Component Generator
 
@@ -180,6 +180,9 @@ Hopefully these paragraphs have allowed you to understand "zot"
 better."""
 ----
 +
+Or a string may be preceded by the literal character 'r', in which
+case the string is interpreted like a Python raw-string.
++
 The documentation string is in "groff -man" format. For more
 information on this markup format, see 'groff_man(7)'. Remember that
 'halcompile' interprets backslash escapes in strings, so for instance
@@ -187,6 +190,13 @@ to set the italic font for the word 'example', write:
 +
 ----
 "\\fIexample\\fB"
+----
++
+In this case, r-strings are particularly useful, because the backslashes
+in an r-string need not be doubled:
++
+----
+r"\fIexample\fB"
 ----
 
 * 'TYPE' - One of the HAL types: 'bit', 'signed', 'unsigned', or 'float'. The old
@@ -269,8 +279,8 @@ The currently defined options are:
    in the automatically defined 'rtapi_app_main'.
 
 * 'option userspace yes' - (default: no)
-   If specified, this file describes a userspace component, rather
-   than a real one. A userspace component may not have functions 
+   If specified, this file describes a userspace (ie, non-realtime) component, rather
+   than a regular (ie, realtime) one. A userspace component may not have functions
    defined by the 'function'  directive. Instead, after all the 
    instances are constructed, the C function `void user_mainloop(void);`
    is called. When this function returns, the component exits. 

@@ -30,6 +30,7 @@ from hal_lightbutton import HAL_LightButton
 from overridewidget import Override
 
 from jogwheel import JogWheel
+from speedcontrol import SpeedControl
 from hal_dial import Hal_Dial
 
 from hal_actions import *
@@ -37,6 +38,6 @@ from hal_filechooser import *
 
 from hal_sourceview import *
 from hal_mdihistory import *
-
+from macro_widget import MacroSelect
 from hal_pyngcgui import PyNgcGui
 from hal_gremlin_plus import HAL_GremlinPlus

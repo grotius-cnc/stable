@@ -18,7 +18,7 @@
 #         reduce subroutine parm name lengths and/or comment string length
 
 #------------------------------------------------------------------------------
-# Copyright: 2013-4
+# Copyright: 2013-6
 # Author:    Dewey Garrett <dgarrett@panix.com>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #------------------------------------------------------------------------------
 """ python classes to implement an ngcgui-like application
 
@@ -2147,6 +2147,9 @@ class ControlPanel():
         intfc = self.mypg.nset.intfc
 
         global g_gcmc_exe
+        if g_gcmc_exe is None:
+            if not find_gcmc():
+                return False ;# fail
         xcmd = []
         xcmd.append(g_gcmc_exe)
 
@@ -2357,9 +2360,11 @@ class ControlPanel():
             f.write("%\n")
             f.write("(%s: nom2 option)\n" % g_progname)
 
-        featurect = 0
+        featurect = 0; features_total=0
         for pg in plist:
-            ct = self.write_to_file(f,pg,featurect)
+            features_total = features_total + len(pg.savesec)
+        for pg in plist:
+            ct = self.write_to_file(f,pg,featurect,features_total)
             featurect += ct
             pg.feature_ct = 0
             self.lfct.set_label(str(pg.feature_ct))
@@ -2406,16 +2411,22 @@ class ControlPanel():
         g_label_id = 0 # reinitialize
         return
 
-    def write_to_file(self,file,pg,featurect):
+    def write_to_file(self,file,pg,featurect,features_total):
         ct = 0
         for i in range(0,len(pg.savesec) ):
             ct += 1
             for l in pg.savesec[i].sdata:
                 if l.find("#<_feature:>") == 0:
-                    l = "(%s: feature line added) #<_feature:> = %d\n" \
-                         % (g_progname,featurect)
+                    file.write(
+                      "(%s: feature line added) #<_feature:> = %d\n"\
+                      % (g_progname,featurect))
                     featurect += 1
-                file.write(l)
+                    file.write(
+                      "(%s: remaining_features line added) "
+                      " #<_remaining_features:> = %d\n"\
+                      % (g_progname,features_total - featurect))
+                else:
+                    file.write(l)
         return(ct)
 
     def file_choose(self,widget,ftype):
@@ -3377,9 +3388,8 @@ Options requiring values:
     [-p | --preamble      preamble_filename]
     [-P | --postamble     postamble_filename]
     [-i | --ini           inifile_name]
-    [-a | --autofile      autoauto_filename]
+    [-a | --autofile      auto_filename]
     [-t | --test          testno]
-    [-H | --height        height_of_entry widget] (typ 20-40)
     [-K | --keyboardfile  glade_file] (use custom popupkeyboard glade file)
 Solo Options:
     [-v | --verbose]
@@ -3394,7 +3404,7 @@ Notes:
       One set of files can be specified from cmdline.
       Multiple sets of files can be specified from an inifile.
       If --ini is NOT specified:
-         search for a running linuxcnc and use it's inifile
+         search for a running linuxcnc and use its inifile
     """ % g_progname)
 #-----------------------------------------------------------------------------
 # Standalone (and demo) usage:

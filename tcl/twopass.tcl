@@ -51,7 +51,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #--------------------------------------------------------------------------
 
 namespace eval ::tp {
@@ -107,12 +107,23 @@ proc ::tp::loadusr_substitute {args} {
   }
 } ;# loadusr_substitute
 
-proc ::tp::loadrt_substitute {args} {
-  # syntax: loadrt modulename item=value ...
-  set parms  [split $args]
-  set module [lindex $parms 0]
+proc ::tp::loadrt_substitute {arg1 args} {
+  set arg1split [split $arg1]
+  # detect multiple items in arg1
+  if {[llength $arg1split] > 1} {
+    #puts "loadrt_substitute arg1split=<$arg1split>"
+    #example:                arg1split=<\{trivkins coordinates=xyz\}>
+    set arg1split [string range $arg1 1 [expr -2 + [string len $arg1]]]
+    set arg1args  ""
+    for {set i 0} {$i < [llength $arg1split]} {incr i} {
+      set arg1args [concat $arg1args [lindex $arg1split $i]]
+    }
+    set theargs [concat $arg1args $args]
+  } else {
+    set theargs [concat $arg1 $args]
+  }
+  set module [lindex $theargs 0]
   set pass   [passnumber]
-  #puts "loadrt_substitute<$pass> <$parms>"
 
   # keep track of loadrt for each module in order to detect
   # unsupportable loadrt calls in pass1. The ct is the number of
@@ -136,7 +147,9 @@ proc ::tp::loadrt_substitute {args} {
     }
   }
   if {$pass > 0} {
-    eval orig_loadrt $parms
+    if [catch {eval orig_loadrt $parms} msg] {
+      puts "\ntwopass:loadrt_substitute parms=<$parms>\n$msg\n"
+    }
     return
   }
   # pass0 only follows ------------------------------------
@@ -148,8 +161,51 @@ proc ::tp::loadrt_substitute {args} {
     }
   }
 
-  set parms   [lreplace $parms 0 0]
-  foreach pair $parms {
+  set parms   [lreplace $theargs 0 0]
+
+  # A loadrt cmd may have a complex config= with multiple items:
+  # Example:
+  # loadrt hm2_eth board_ip=n.n.n.n config="num_stepgens=n num_pwmgens=n"
+  # The parms item received here has escaped quotes:
+  #  board_ip=10.10.10.10 config=\"num_stepgens=3 num_pwmgens=2 num_encoders=2\"
+  # We have to find the escaped leading and trailing quotes and the
+  # blanks separating num_* items to assemble the config= parm.
+  # After assembling string for config=, remove the backslashes and
+  # use concat.
+
+  while {[string len $parms] > 0} {
+    set first_blank [string first " " $parms]
+    set first_escaped_quote [string first \\\" $parms]
+    set second_escaped_quote -1
+    if {$first_escaped_quote >=0} {
+       set second_escaped_quote \
+       [expr $first_escaped_quote +2 + \
+             [string first \\\" \
+                [string range $parms [expr $first_escaped_quote+2] end]] \
+       ]
+    }
+    # puts "____$first_blank $first_escaped_quote $second_escaped_quote"
+
+    if {$first_blank < 0} {
+      set pair $parms
+      set parms ""
+      #puts A_newparms=<$parms>
+    } else {
+      if {  ($first_escaped_quote< 0)
+          ||($first_escaped_quote>=0)&&($first_blank<$first_escaped_quote)
+         } {
+        set pair  [string range $parms 0 [expr $first_blank -1]]
+        set parms [string range $parms [expr $first_blank +1] end]
+        #puts B_newparms=<$parms>
+      } else {
+        set pair [string range $parms 0 [expr $second_escaped_quote +1]]
+        set pair [string map {\\ ""} $pair] ;# remove \" items
+        set pair "\[concat $pair\]"         ;# use concat
+        set parms [string range $parms [expr $second_escaped_quote +3] end]
+        #puts C_newparms=<$parms>
+      }
+    }
+
     set l     [split $pair =]
     set item  [lindex $l 0]
     set value [lindex $l 1]
@@ -188,6 +244,13 @@ proc ::tp::loadrt_substitute {args} {
                 set ::TP($module,names) "$::TP($module,names),$value"
               }
             }
+      personality {
+              if ![info exists ::TP($module,personality)] {
+                set ::TP($module,personality) $value
+              } else {
+                set ::TP($module,personality) "$::TP($module,personality),$value"
+              }
+            }
      debug  {
               if ![info exists ::TP($module,debug)] {
                 set ::TP($module,debug) $value
@@ -209,7 +272,7 @@ proc ::tp::loadrt_substitute {args} {
                }
              }
     }
-  } ;# foreach pair
+  } ;# while
 } ;# loadrt_substitute
 
 proc ::tp::addf_substitute {args} {
@@ -373,6 +436,20 @@ proc ::tp::hal_to_tcl {ifile ofile} {
 
       set new "[string range $line 0 [expr $l -1]]"
       set new "${new}\$::$stanza\("
+
+      # handle [SECTION](VAR)<any char>
+      if {[string range $line [expr $r+1] [expr $r+1]] == "("} {
+        set r2 [string first \) $line $r]
+        if {$r2 < 0} break
+        set item [string range $line [expr $r+2] [expr $r2-1]]
+        set new "${new}${item}\)"
+        set idx [expr [string length $new] -1]
+        set new "${new}[string range $line [expr $r2 +1] end]"
+        set line $new
+        continue
+      }
+
+      # handle [SECTION]VAR<whitespace>
       set s [string first " " $line $r]
       if {$s <0} {
         set item   [string range $line [expr $r + 1] end]
@@ -404,20 +481,6 @@ proc ::tp::hal_to_tcl {ifile ofile} {
   close $fdout
   return $ofile
 } ;# hal_to_tcl
-
-proc ::tp::parse_ini {filename} {
-  # adapted from haltcl.in
-  set f [open $filename]
-  while {[gets $f line] >= 0} {
-    if {[regexp {^\[(.*)\]\s*$} $line _ section]} {
-      # nothing
-    } elseif {[regexp {^([^#]+?)\s*=\s*(.*?)\s*$} $line _  k v]} {
-      upvar $section s
-      lappend s([string trim $k]) $v
-    }
-  }
-  close $f
-} ;# parse_ini
 
 proc ::tp::source_the_files {} {
   foreach file_plus_args $::TP(runfiles) {
@@ -468,6 +531,10 @@ proc ::tp::load_the_modules {} {
     } elseif [info exists ::TP($m,names)] {
       set cmd "$cmd names=$::TP($m,names)"
     }
+
+    if [info exists ::TP($m,personality)] {
+      set cmd "$cmd personality=$::TP($m,personality)"
+    }
     if [info exists ::TP($m,debug)] {
       set cmd "$cmd debug=$::TP($m,debug)"
     }
@@ -475,7 +542,9 @@ proc ::tp::load_the_modules {} {
       set cmd "$cmd $::TP($m,other)"
     }
     verbose "[string range $cmd 5 end]" ;# omit leading orig_
-    eval $cmd
+    if [catch { eval $cmd} msg] {
+       puts "\ntwopass: load_the_modules cmd=<$cmd>\n$msg\n"
+    }
   }
   set ::TP(loaded,modules) $::TP(modules)
   set ::TP(modules) ""
@@ -516,6 +585,7 @@ proc ::tp::verbose {msg} {
 
 #----------------------------------------------------------------------
 # begin
+package require Linuxcnc ;# parse_ini
 set ::tp::options ""
 set ::tp::verbose 0
 if {[string first verbose [string tolower $::HAL(TWOPASS)]] >=0} {

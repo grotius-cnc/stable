@@ -2,7 +2,7 @@
 
 '''
     This class is just to handle the widgets of gmoccapy,
-    it is just a coppy of a class from gscreen and has been slighly modified
+    it is just a copy of a class from gscreen and has been slighly modified
 
     Copyright 2014 Norbert Schechner
     nieson@web.de
@@ -20,7 +20,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 '''
 

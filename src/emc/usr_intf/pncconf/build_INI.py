@@ -23,14 +23,16 @@ class INI:
         print >>file, "MACHINE = %s" % self.d.machinename
         print >>file, "DEBUG = 0"
 
+        # the joints_axes conversion script named 'update_ini'
+        # will try to update for joints_axes if no VERSION is set
+        print >>file, "VERSION = 1.0"
+
         print >>file
         print >>file, "[DISPLAY]"
         if self.d.frontend == _PD._AXIS:
             print >>file, "DISPLAY = axis"
         elif self.d.frontend == _PD._TKLINUXCNC:
             print >>file, "DISPLAY = tklinuxcnc"
-        elif self.d.frontend == _PD._MINI:
-            print >>file, "DISPLAY = mini"
         elif self.d.frontend == _PD._TOUCHY:
             print >>file, "DISPLAY = touchy"
         if self.d.gladevcp:
@@ -98,7 +100,6 @@ class INI:
         print >>file, "[EMCMOT]"
         print >>file, "EMCMOT = motmod"
         print >>file, "COMM_TIMEOUT = 1.0"
-        print >>file, "COMM_WAIT = 0.010"
         #print >>file, "BASE_PERIOD = %d" % self.d.baseperiod
         print >>file, "SERVO_PERIOD = %d" % self.d.servoperiod
         print >>file
@@ -130,37 +131,42 @@ class INI:
         print >>file, "[HALUI]"          
         if self.d.halui == True:
             for i in range(0,15):
-                cmd =self["halui_cmd" + str(i)]
+                cmd =self.d["halui_cmd" + str(i)]
                 if cmd =="": break
                 print >>file,"MDI_COMMAND = %s"% cmd           
 
+        # self.d.axes codes:
+        if   self.d.axes == 0: num_joints = 3; coords = "X Y Z"
+        elif self.d.axes == 1: num_joints = 4; coords = "X Y Z A"
+        elif self.d.axes == 2: num_joints = 2; coords = "X Z"
+        else:
+            print "___________________unknown self.d.axes",self.d.axes
+        print >>file
+        print >>file,  "[KINS]"
+        # trivial kinematics: no. of joints == no.of axes)
+        # with trivkins, axes do not have to be consecutive
+        print >>file, "JOINTS = %d"%num_joints
+        print >>file, "KINEMATICS = trivkins coordinates=%s"%coords.replace(" ","")
+
         print >>file
         print >>file, "[TRAJ]"
+        print >>file, "COORDINATES = ",coords
         if self.d.axes == 1:
-            print >>file, "AXES = 4"
-            print >>file, "COORDINATES = X Y Z A"
             print >>file, "MAX_ANGULAR_VELOCITY = %.2f" % self.d.amaxvel
             defvel = min(60, self.d.amaxvel/10.)
             print >>file, "DEFAULT_ANGULAR_VELOCITY = %.2f" % defvel
-        elif self.d.axes == 0:
-            print >>file, "AXES = 3"
-            print >>file, "COORDINATES = X Y Z"
-        else:
-            print >>file, "AXES = 3"
-            print >>file, "COORDINATES = X Z"
         if self.d.units == _PD._METRIC:
             print >>file, "LINEAR_UNITS = mm"
         else:
             print >>file, "LINEAR_UNITS = inch"
         print >>file, "ANGULAR_UNITS = degree"
-        print >>file, "CYCLE_TIME = 0.010"
         if self.d.axes == 2:
             maxvel = max(self.d.xmaxvel, self.d.zmaxvel)
         else:
             maxvel = max(self.d.xmaxvel, self.d.ymaxvel, self.d.zmaxvel)
         hypotvel = (self.d.xmaxvel**2 + self.d.ymaxvel**2 + self.d.zmaxvel**2) **.5
         defvel = min(maxvel, max(.1, maxvel/10.))
-        print >>file, "DEFAULT_VELOCITY = %.2f" % defvel
+        print >>file, "DEFAULT_LINEAR_VELOCITY = %.2f" % defvel
         print >>file, "MAX_LINEAR_VELOCITY = %.2f" % maxvel
         if self.d.restore_joint_position:
             print >>file, "POSITION_FILE = position.txt"
@@ -182,12 +188,20 @@ class INI:
         if self.d.axes != 2: all_homes = all_homes and self.a.home_sig("y")
         if self.d.axes == 4: all_homes = all_homes and self.a.home_sig("a")
 
-        self.write_one_axis(file, 0, "x", "LINEAR", all_homes)
-        if self.d.axes != 2:
+        # todo: simplify hardcoding for trivkins sequential joint no.s
+        if   self.d.axes == 0: # "X Y Z"
+            self.write_one_axis(file, 0, "x", "LINEAR", all_homes)
             self.write_one_axis(file, 1, "y", "LINEAR", all_homes)
-        self.write_one_axis(file, 2, "z", "LINEAR", all_homes)
-        if self.d.axes == 1:
+            self.write_one_axis(file, 2, "z", "LINEAR", all_homes)
+        elif self.d.axes == 1: # "X Y Z A"
+            self.write_one_axis(file, 0, "x", "LINEAR", all_homes)
+            self.write_one_axis(file, 1, "y", "LINEAR", all_homes)
+            self.write_one_axis(file, 2, "z", "LINEAR", all_homes)
             self.write_one_axis(file, 3, "a", "ANGULAR", all_homes)
+        elif self.d.axes == 2: # "X Z"
+            self.write_one_axis(file, 0, "x", "LINEAR", all_homes)
+            self.write_one_axis(file, 1, "z", "LINEAR", all_homes)
+
         self.write_one_axis(file, 9, "s", "null", all_homes)
         file.close()
         self.d.add_md5sum(filename)
@@ -215,9 +229,10 @@ class INI:
             print >>file, "#********************"
             print >>file, "[SPINDLE_%d]" % num
         else:
-            print >>file, "# Axis %s" % letter.upper()
+            print >>file
+            print >>file, "# Joint %d" % num
+            print >>file, "[JOINT_%d]" % num
             print >>file, "#********************"
-            print >>file, "[AXIS_%d]" % num
             print >>file, "TYPE = %s" % type
             print >>file, "HOME = %s" % get("homepos")
             print >>file, "FERROR = %s"% get("maxferror")
@@ -232,8 +247,8 @@ class INI:
                     factor = 2.0
                 else:
                     factor = 1.25
-                    print >>file, "STEPGEN_MAXVEL = %.2f" % (float(get("maxvel")) * factor)
-                    print >>file, "STEPGEN_MAXACCEL = %.2f" % (float(get("maxacc")) * factor)
+                print >>file, "STEPGEN_MAXVEL = %.2f" % (float(get("maxvel")) * factor)
+                print >>file, "STEPGEN_MAXACCEL = %.2f" % (float(get("maxacc")) * factor)
 
         print >>file, "P = %s" % get("P")
         print >>file, "I = %s" % get("I") 
@@ -267,9 +282,9 @@ class INI:
                     scale = 1 # we scale the multiple ranges in the HAL file
                 else:
                     scale = self.d.soutputscale # we scale to the max RPM
-                print >>file, "OUTPUT_SCALE = %s"% ( max_voltage_factor * scale * temp)
-                print >>file, "OUTPUT_MIN_LIMIT = %s"% ( min_voltage_factor * scale)
-                print >>file, "OUTPUT_MAX_LIMIT = %s"% (1 * scale)
+                print >>file, "OUTPUT_SCALE = %s"% ( int(max_voltage_factor * scale * temp) )
+                print >>file, "OUTPUT_MIN_LIMIT = %s"% ( int(min_voltage_factor * scale) )
+                print >>file, "OUTPUT_MAX_LIMIT = %s"% ( int(scale) )
                 print >>file
             else:
                 print >>file, "OUTPUT_SCALE = %s" % (get("outputscale") * temp)
@@ -305,7 +320,6 @@ class INI:
         maxlim = max(maxlim, home + extend)
         print >>file, "MIN_LIMIT = %s" % minlim
         print >>file, "MAX_LIMIT = %s" % maxlim
-
         thisaxishome = set(("all-home", "home-" + letter, "min-home-" + letter, "max-home-" + letter, "both-home-" + letter))
         ignore = set(("min-home-" + letter, "max-home-" + letter, "both-home-" + letter))
         homes = False
@@ -340,6 +354,20 @@ class INI:
                 print >>file, "HOME_SEQUENCE = %s" % order[num]
         else:
             print >>file, "HOME_OFFSET = %s" % get("homepos")
+
+        # For KINEMATICS_IDENTITY:
+        #     use axis MIN,MAX values identical corresponding joint values
+        if not letter == "s":
+            axis_letter = letter.upper()
+            print >>file, "# Axis %s" % axis_letter
+            print >>file, "#********************"
+            print >>file, "[AXIS_%s]" % axis_letter
+            print >>file, "MAX_VELOCITY = %s" % get("maxvel")
+            print >>file, "MAX_ACCELERATION = %s" % get("maxacc")
+            print >>file, "MIN_LIMIT = %s" % minlim
+            print >>file, "MAX_LIMIT = %s" % maxlim
+            print >>file
+
 
 
 # BOILER CODE

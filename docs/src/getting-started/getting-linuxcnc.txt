@@ -1,4 +1,4 @@
-[[cha:getting-linuxcnc]] (((Getting LinuxCNC)))
+[[cha:getting-linuxcnc]]
 
 = Getting LinuxCNC
 
@@ -47,7 +47,7 @@ method.
 
 .zsync in Linux
 
-. Install zsync using Synaptic or, by running the following in a terminal
+. Install zsync using Synaptic or, by running the following in a <<faq:terminal,terminal>>
 +
 ----
 sudo apt-get install zsync
@@ -73,7 +73,11 @@ https://www.assembla.com/spaces/zsync-windows/documents
 +
 ----
 md5sum linuxcnc-2.7-wheezy.iso
+----
++
 or
++
+----
 sha256sum linuxcnc-2.7-wheezy.iso
 ----
 . Then compare to these checksums
@@ -95,7 +99,8 @@ The LinuxCNC Live/Install Image is a hybrid ISO image which can be written
 directly to a USB storage device (flash drive) or a DVD and used to boot
 a computer.  The image is too large to fit on a CD.
 
-. Writing the image to a USB storage device in Linux
+.Writing the image to a USB storage device in Linux
+
 . Connect a USB storage device (for example a flash drive or thumb
   drive type device).
 . Determine the device file corresponding to the USB flash drive.
@@ -156,7 +161,7 @@ Linux knowledge needed.
 It is OK to upgrade everything except the operating system when asked to.
 
 [WARNING]
-Do not upgrade the operating system if promped to do so.
+Do not upgrade the operating system if prompted to do so.
 
 == Install Problems
 
@@ -177,7 +182,6 @@ kernel flavors, etc), new installs are supported on following platforms:
 [options="header"]
 |===================================================================
 | Distribution   | Architecture | kernel     | Typical use
-| Debian Jessie  | amd64 & i386 | Preempt-RT | machine control & simulation
 | Debian Jessie  | amd64 & i386 | Stock      | simulation only
 | Debian Wheezy  | i386         | RTAI       | machine control & simulation
 | Debian Wheezy  | amd64 & i386 | Preempt-RT | machine control & simulation
@@ -196,18 +200,26 @@ debian archive.  The apt source is:
 * Ubuntu Lucid: `deb http://linuxcnc.org lucid base`
 
 The Preempt-RT kernels are available for Debian Wheezy from the
-regular debian.org archive, and for Debian Jessie from the debian.org
-jessie-backports archive.  The packages are called `linux-image-rt-amd64`
+regular debian.org archive.  The packages are called `linux-image-rt-amd64`
 and `linux-image-rt-686-pae`.
 
-=== Installing on Debian Wheezy and Debian Jessie (with Preempt-RT kernel)
+=== Installing on Debian Wheezy (with Preempt-RT kernel)
 
-. Install Debian Wheezy (Debian version 7) or Debian Jessie (Debian version 8),
+. Install Debian Wheezy (Debian version 7),
   either i386 or amd64.  You can download the installer here:
-  https://www.debian.org/releases/
+  https://www.debian.org/releases/. One version that is tested is the net
+  install 'debian-7.9.0-i386-netinst.iso'. Be careful and don't download Debian
+  8.
 
-. Run the following in a terminal to bring the machine up to date with the
-  latest packages.
+. After burning the iso and booting up if you don't want Gnome desktop select
+  'Advanced Options' > 'Alternative desktop environments' and pick the one you
+  like. Then select 'Install' or 'Graphical Install'.
++
+WARNING: Do not enter a root password, if you do sudo is disabled and you won't
+be able to complete the following steps.
+
+. Run the following in a <<faq:terminal,terminal>> to bring the machine up to
+  date with the latest packages.
 +
 ----
 sudo apt-get update
@@ -217,30 +229,30 @@ sudo apt-get dist-upgrade
 . Install the Preempt-RT kernel and modules
 +
 ----
-sudo apt-get install linux-image-rt-amd64
-or
 sudo apt-get install linux-image-rt-686-pae
 ----
 
-. Reboot, and make sure you boot into the Preempt-RT kernel. When you
-  log in, verify that the following includes `PREEMPT` and `RT`.
+. Reboot, and select the Linux 3.2.0-4-rt-686-pae kernel. When you
+  log in, verify that `PREEMPT RT`is reported by the following command.
 +
 ----
 uname -v
 ----
 
+. Open Applications Menu > System > Synaptic Package Manager search for
+  'linux-image' and right click on 'linux-image-3.2.0-4-686-pae' and select
+  'Mark for Complete Removal'. Do the same for 'linux-image-686-pae'. Reboot.
+
 . Add the LinuxCNC Archive Signing Key to your apt keyring by running
 +
 ----
-sudo apt-key adv --keyserver hkp://keys.gnupg.net --recv-key 8f374fef
+sudo apt-key adv --keyserver hkp://keys.gnupg.net --recv-key 3cb9fd148f374fef
 ----
 
-. Add a new apt source that looks like this:
+. Add a the apt repository:
 +
 ----
-deb http://linuxcnc.org/ wheezy base 2.7-uspace
-or
-deb http://linuxcnc.org/ jessie base 2.7-uspace
+sudo add-apt-repository "deb http://linuxcnc.org/ wheezy base 2.7-uspace"
 ----
 
 . Update the package list from linuxcnc.org
@@ -249,7 +261,7 @@ deb http://linuxcnc.org/ jessie base 2.7-uspace
 sudo apt-get update
 ----
 
-. Install uspace
+. Install uspace (a reboot may be required prior to installing uspace)
 +
 ----
 sudo apt-get install linuxcnc-uspace
@@ -274,13 +286,13 @@ sudo apt-get dist-upgrade
 . Add the LinuxCNC Archive Signing Key to your apt keyring by running
 +
 ----
-sudo apt-key adv --keyserver hkp://keys.gnupg.net --recv-key 8f374fef
+sudo apt-key adv --keyserver hkp://keys.gnupg.net --recv-key 3cb9fd148f374fef
 ----
 
 . Add a new apt source 
 +
 ----
-deb http://linuxcnc.org/ precise base 2.7-rtai
+sudo add-apt-repository "deb http://linuxcnc.org/ precise base 2.7-rtai"
 ----
 
 . Fetch the package list from linuxcnc.org.

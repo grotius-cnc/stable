@@ -1,4 +1,4 @@
-[[cha:remap]](((Remap Extending G code)))
+[[cha:remap]]
 
 = Remap Extending G code
 
@@ -1107,8 +1107,8 @@ o100 if [..] (some error condition)
      (abort, Bad Things! p42=#42 q=#<q> ini=#<_ini[a]x> pin=#<_hal[component.pin])
 o100 endif
 ---------------------------------------------------------------------
-NB: ini and HAL variable expansion need explicit enabling with
-<<remap:ini-features,FEATURE>>.
+NOTE: ini and HAL variable expansion need explicit enabling with the
+<<remap:ini-features,FEATURES>> mask.
 
 If more fine grained recovery action is needed, use the idiom
 laid out in the previous example:
@@ -2612,7 +2612,7 @@ need to replace ini variables which are currently used in the
 hard-coded tool change process, like the `[EMCIO]TOOL_CHANGE_POSITION` parameter.
 
 CAUTION: this section doesn't really belong here but since it comes with
-the same branch, here it rests for now until its clear this will be
+the same branch, here it rests for now until it's clear this will be
 merged. It should go into the gcode/overview Named Parameters section.
 
 [[remap:referto-hal-items]]
@@ -2654,13 +2654,13 @@ This feature was motivated by the desire for stronger coupling between
 user interface components like `GladeVCP` and `PyVCP` to act as
 parameter source for driving NGC file behavior. The alternative -
 going through the M6x pins and wiring them - has a limited,
-non-mmemonic namespace and is unnecessary cumbersome just as a
+non-mnemonic namespace and is unnecessarily cumbersome just as a
 UI/Interpreter communications mechanism.
 
 NOTE: The values are are only updated when the G code is not running.
 
 CAUTION: this section doesn't really belong here but since it comes with
-the same branch, here it rests for now until its clear this will be
+the same branch, here it rests for now until it's clear this will be
 merged. It should go into the gcode/overview Named Parameters section.
 
 ==  Status
@@ -2675,102 +2675,6 @@ iocontrol-v2 to actually work.
 // Interpreter internals access - Python view
 // Task internals access - Python view
 
-==  Build notes - Lucid (10.04)
-
-For the interpreter & task Python plug ins, this is required:
-
- apt-get install libboost-python1.40-dev
-
-When compiling you might notice that interpmodule.cc takes very long
-to compile, which is normal - the extensive use of C++ templates makes the
-compiler breathe heavily. 
-
-If you want to play with the configs/sim/axis/remap/iocontrol-removed
-example, you need to install as follows:
-
- apt-get unixODBC-dev libsqliteodbc sqlite3
- git clone https://code.google.com/p/pyodbc/
- sudo  python setup.py build install
-
-If you'd want to try how the Firefox SQlite manager plugin looks &
-feels as a tool table editor, try this:
-
-. read http://code.google.com/p/sqlite-manager/
-
-. download the zip file  'SQLiteManager 0.7.7 as XULRunner App' 
-    or whatever is the latest from http://code.google.com/p/sqlite-manager/downloads/list
-
-. create a directory under your home directory, eg ~/sqlite-manager
-
-. unzip the zp file from 1) into this directory
- 
-.try running firefox with this plug in and the tooltable.sqlite file in this directory like so:
- `firefox -app <homdir>/sqlite-manager/application.ini -f tooltable.sqlite`
-   
- firefox should come up with the sqlite manager extension and having this database opened
-
-. adapt the following command line with appropriate paths in the ini file:
-
-`TOOL_EDITOR= firefox -app  /home/mah/sqlite-manager/application.ini -f /home/mah/emc2-dev/configs/sim/remap/iocontrol-removed/tooltable.sqlite`
-
-== Build notes - Hardy (8.04)
-
-Building and running on Hardy is possible. run tests works fine too, so
-the remapping framework per se is ok.
-
-However running the examples is quite limited as of now:
-
-The Git version included in 8.04 is too old to pull
-https://code.google.com/p/pyodbc/ so the iocontrol-removed demo cant
-be run.
-
-The  python-gtkglext1 dependency is missing for reasons I dont
-understand.
-
-Even if python-gtkglext1 is installed, the startup of the
-manualtoolchange and racktoolchange demos fails due to gladevcp startup issues.
-
-Note that has nothing to to with the new code but rather the very old
-platform trying to run gladevcp.
-
-== Workarounds
-
-The workaround mentioned below was necessary up to commit
-d21a488a9e82dd85aa17207b80e3d930afeff202 . References to
-DISPLAY_LD_PRELOAD and TASK_LD_PRELOAD have been removed from the ini
-files under configs/sim/axis/remap because they are not needed anymore.
-
-Configure now tests whether a workaround is required, and
-automatically does 'the right thing' if needed.
-
- # Michael Haberler 4/2011
- #
- # if you get a segfault like described
- # here: https://bugs.launchpad.net/ubuntu/+source/mesa/+bug/259219
- # or here: https://www.libavg.de/wiki/LinuxInstallIssues#glibc_invalid_pointer :
- #
- # specify a workaround with:
- # [DISPLAY]
- # DISPLAY_LD_PRELOAD = /usr/lib/libstdc++.so.6
- # and
- # [TASK]
- # TASK_LD_PRELOAD = /usr/lib/libstdc++.so.6
- #
- # this is actually a bug in libgl1-mesa-dri and it looks
- # it has been fixed in mesa - 7.10.1-0ubuntu2
- # unfortunately for now this workaround is needed
- DISPLAY_LD_PRELOAD = /usr/lib/libstdc++.so.6
-
-// normal, _italic_, *bold*, +mono+.
-// ``double quoted'', `single quoted'.
-// normal, ^super^, ~sub~.
-// normal, italic, bold, mono.
-// “double quoted”, ‘single quoted’.
-// normal, super, sub.
-// Command: `ls -al`
-// +mono *bold*+
-// `passthru *bold*`
-
 == Changes
 
 - the method to return error messages and fail used to be
@@ -2780,4 +2684,25 @@ automatically does 'the right thing' if needed.
   program. Previously there was no clean way to abort a Python oword
   subroutine.
 
+== Debugging
 
+In the '[EMC]' section of the ini file the 'DEBUG' parameter can be changed to
+get various levels of debug messages when LinuxCNC is started from a terminal.
+
+----
+Debug level, 0 means no messages. See src/emc/nml_intf/debugflags.h for others
+DEBUG = 0x00000002 # configuration
+DEBUG = 0x7FFFDEFF # no interp,oword
+DEBUG = 0x00008000 # py only
+DEBUG = 0x0000E000 # py + remap + Oword
+DEBUG = 0x0000C002 # py + remap + config
+DEBUG = 0x0000C100 # py + remap + Interpreter
+DEBUG = 0x0000C140 # py + remap + Interpreter + NML msgs
+DEBUG = 0x0000C040 # py + remap + NML
+DEBUG = 0x0003E100 # py + remap + Interpreter + oword + signals + namedparams
+DEBUG = 0x10000000 # EMC_DEBUG_USER1 - trace statements
+DEBUG = 0x20000000 # EMC_DEBUG_USER2 - trap into Python debugger
+DEBUG = 0x10008000 # USER1, PYTHON
+DEBUG = 0x30008000 # USER1,USER2, PYTHON # USER2 will cause involute to try to connect to pydev
+DEBUG = 0x7FFFFFFF # All debug messages
+----

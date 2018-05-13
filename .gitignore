@@ -31,6 +31,7 @@ lib/python/gremlin.py
 lib/python/touchy
 configs/sim/gmoccapy/*.pref
 configs/sim/gmoccapy/gmoccapy_plasma/*.pref
+configs/sim/gmoccapy/gmoccapy-JA/*.pref
 # Miscellaneous generated files (Rob)
 cscope
 cscope.*
@@ -39,3 +40,4 @@ oprofile*
 *.log
 position.txt
 *.9
+*.glade.h

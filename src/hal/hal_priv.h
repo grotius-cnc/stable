@@ -41,7 +41,7 @@
 
     You should have received a copy of the GNU General Public
     License along with this library; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111 USA
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
     THE AUTHORS OF THIS LIBRARY ACCEPT ABSOLUTELY NO LIABILITY FOR
     ANY HARM OR LOSS RESULTING FROM ITS USE.  IT IS _EXTREMELY_ UNWISE
@@ -278,8 +278,8 @@ typedef struct {
     int users;			/* number of threads using function */
     void *arg;			/* argument for function */
     void (*funct) (void *, long);	/* ptr to function code */
-    hal_s32_t* runtime;	/* (pin) duration of last run, in nsec */
-    hal_s32_t maxtime;	/* (param) duration of longest run, in nsec */
+    hal_s32_t* runtime;	/* (pin) duration of last run, in CPU cycles */
+    hal_s32_t maxtime;	/* (param) duration of longest run, in CPU cycles */
     hal_bit_t maxtime_increased;	/* on last call, maxtime increased */
     char name[HAL_NAME_LEN + 1];	/* function name */
 } hal_funct_t;
@@ -299,8 +299,8 @@ typedef struct {
     long int period;		/* period of the thread, in nsec */
     int priority;		/* priority of the thread */
     int task_id;		/* ID of the task that runs this thread */
-    hal_s32_t* runtime;	/* (pin) duration of last run, in nsec */
-    hal_s32_t maxtime;	/* (param) duration of longest run, in nsec */
+    hal_s32_t* runtime;	/* (pin) duration of last run, in CPU cycles */
+    hal_s32_t maxtime;	/* (param) duration of longest run, in CPU cycles */
     hal_list_t funct_list;	/* list of functions to run */
     char name[HAL_NAME_LEN + 1];	/* thread name */
     int comp_id;
@@ -427,5 +427,19 @@ extern hal_funct_t *halpr_find_funct_by_owner(hal_comp_t * owner,
 */
 extern hal_pin_t *halpr_find_pin_by_sig(hal_sig_t * sig, hal_pin_t * start);
 
+#define HAL_STREAM_MAGIC_NUM		0x4649464F
+struct hal_stream_shm {
+    unsigned int magic;
+    volatile unsigned int in;
+    volatile unsigned int out;
+    unsigned this_sample;
+    int depth;
+    int num_pins;
+    unsigned long num_overruns, num_underruns;
+    hal_type_t type[HAL_STREAM_MAX_PINS];
+    union hal_stream_data data[];
+};
+
+extern int halpr_parse_types(hal_type_t type[HAL_STREAM_MAX_PINS], const char *fcg);
 RTAPI_END_DECLS
 #endif /* HAL_PRIV_H */

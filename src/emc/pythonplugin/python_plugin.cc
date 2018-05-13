@@ -14,7 +14,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with this program; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 #include "python_plugin.hh"
 #include "inifile.hh"
@@ -22,6 +22,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#define BOOST_PYTHON_MAX_ARITY 4
+#include <boost/python/exec.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/python/import.hpp>
+
+namespace bp = boost::python;
 
 #define MAX_ERRMSG_SIZE 256
 
@@ -44,12 +51,21 @@
 
 extern const char *strstore(const char *s);
 
+// boost python versions from 1.58 to 1.61 (the latest at the time of
+// writing) all have a bug in boost::python::execfile that results in a
+// double free.  Work around it by using the Python implementation of
+// execfile instead.
+// The bug was introduced at https://github.com/boostorg/python/commit/fe24ab9dd5440562e27422cd38f7de03356bfd16
+bp::object working_execfile(const char *filename, bp::object globals, bp::object locals) {
+    return bp::import("__builtin__").attr("execfile")(filename, globals, locals);
+}
+
 int PythonPlugin::run_string(const char *cmd, bp::object &retval, bool as_file)
 {
     reload();
     try {
 	if (as_file)
-	    retval = bp::exec_file(cmd, main_namespace, main_namespace);
+	    retval = working_execfile(cmd, main_namespace, main_namespace);
 	else
 	    retval = bp::exec(cmd, main_namespace, main_namespace);
 	status = PLUGIN_OK;
@@ -249,7 +265,7 @@ int PythonPlugin::initialize()
 		main_namespace[inittab_entries[i]] = bp::import(inittab_entries[i].c_str());
 	    }
 	    if (toplevel) // only execute a file if there's one configured.
-		bp::object result = bp::exec_file(abs_path,
+		bp::object result = working_execfile(abs_path,
 						  main_namespace,
 						  main_namespace);
 	    status = PLUGIN_OK;

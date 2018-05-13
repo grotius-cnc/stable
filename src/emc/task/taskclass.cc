@@ -36,6 +36,13 @@
 #include "python_plugin.hh"
 #include "taskclass.hh"
 
+#define BOOST_PYTHON_MAX_ARITY 4
+#include <boost/python/dict.hpp>
+#include <boost/python/extract.hpp>
+#include <boost/python/object.hpp>
+#include <boost/python/tuple.hpp>
+namespace bp = boost::python;
+
 // Python plugin interface
 #define TASK_MODULE "task"
 #define TASK_VAR "pytask"
@@ -526,9 +533,6 @@ int Task::emcIoAbort(int reason)
     ioAbortMsg.reason = reason;
     // send abort command to emcio
     sendCommand(&ioAbortMsg);
-
-    // call abort o-word sub handler if defined
-    emcAbortCleanup(reason);
 
     return 0;
 }

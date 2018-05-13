@@ -1,6 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <requires lib="gtk+" version="2.18"/>
   <!-- interface-naming-policy project-wide -->
   <object class="GtkListStore" id="liststore1">
     <columns>
@@ -40,16 +40,18 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkTreeModelFilter" id="wear_modelfilter">
-    <property name="child_model">liststore1</property>
-  </object>
   <object class="GtkTreeModelFilter" id="tool_modelfilter">
     <property name="child_model">liststore1</property>
   </object>
+  <object class="GtkTreeModelFilter" id="wear_modelfilter">
+    <property name="child_model">liststore1</property>
+  </object>
   <object class="GtkWindow" id="window1">
+    <property name="can_focus">False</property>
     <child>
       <object class="GtkVBox" id="tooledit_box">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <child>
           <object class="GtkNotebook" id="tool_offset_notebook">
             <property name="visible">True</property>
@@ -57,6 +59,7 @@
             <child>
               <object class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <child>
                   <object class="GtkScrolledWindow" id="all_window">
                     <property name="visible">True</property>
@@ -77,7 +80,7 @@
                             <property name="title">Select</property>
                             <child>
                               <object class="GtkCellRendererToggle" id="cell_toggle1">
-                                <signal name="toggled" handler="cell_toggled"/>
+                                <signal name="toggled" handler="cell_toggled" swapped="no"/>
                               </object>
                               <attributes>
                                 <attribute name="active">0</attribute>
@@ -92,9 +95,10 @@
                             <property name="sort_indicator">True</property>
                             <property name="sort_column_id">1</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cell_tool#1"/>
+                              <object class="GtkCellRendererText" id="cell_tool#1">
+                                <property name="editable">True</property>
+                              </object>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">1</attribute>
                               </attributes>
                             </child>
@@ -109,7 +113,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_pos1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">2</attribute>
                               </attributes>
                             </child>
@@ -121,7 +124,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_x1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">3</attribute>
                               </attributes>
                             </child>
@@ -133,7 +135,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_y1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">4</attribute>
                               </attributes>
                             </child>
@@ -145,7 +146,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_z1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">5</attribute>
                               </attributes>
                             </child>
@@ -157,7 +157,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_a1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">6</attribute>
                               </attributes>
                             </child>
@@ -169,7 +168,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_b1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">7</attribute>
                               </attributes>
                             </child>
@@ -181,7 +179,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_c1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">8</attribute>
                               </attributes>
                             </child>
@@ -193,7 +190,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_u1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">9</attribute>
                               </attributes>
                             </child>
@@ -205,7 +201,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_v1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">10</attribute>
                               </attributes>
                             </child>
@@ -217,7 +212,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_w1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">11</attribute>
                               </attributes>
                             </child>
@@ -225,7 +219,7 @@
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="d1">
-                            <property name="title">DIameter</property>
+                            <property name="title">Diameter</property>
                             <property name="clickable">True</property>
                             <property name="reorderable">True</property>
                             <property name="sort_indicator">True</property>
@@ -233,7 +227,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_d1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">12</attribute>
                               </attributes>
                             </child>
@@ -245,7 +238,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_front1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">13</attribute>
                               </attributes>
                             </child>
@@ -257,7 +249,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_back1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">14</attribute>
                               </attributes>
                             </child>
@@ -269,7 +260,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_orient1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">15</attribute>
                               </attributes>
                             </child>
@@ -281,7 +271,6 @@
                             <child>
                               <object class="GtkCellRendererText" id="cell_comments1"/>
                               <attributes>
-                                <attribute name="editable">0</attribute>
                                 <attribute name="text">16</attribute>
                               </attributes>
                             </child>
@@ -291,12 +280,15 @@
                     </child>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkHButtonBox" id="buttonbox">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="layout_style">center</property>
                     <child>
                       <object class="GtkButton" id="delete">
@@ -304,7 +296,8 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_delete_clicked"/>
+                        <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_delete_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -318,7 +311,8 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_add_clicked"/>
+                        <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_add_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -332,7 +326,8 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <signal name="clicked" handler="on_reload_clicked"/>
+                        <property name="use_action_appearance">False</property>
+                        <signal name="clicked" handler="on_reload_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -346,8 +341,9 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
+                        <property name="use_action_appearance">False</property>
                         <property name="yalign">0.60000002384185791</property>
-                        <signal name="clicked" handler="on_save_clicked"/>
+                        <signal name="clicked" handler="on_save_clicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -369,7 +365,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="all_label">
-                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">All Offsets</property>
               </object>
               <packing>
@@ -378,7 +374,6 @@
             </child>
             <child>
               <object class="GtkScrolledWindow" id="wear_window">
-                <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
@@ -419,7 +414,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_pos2"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">2</attribute>
                           </attributes>
                         </child>
@@ -431,7 +425,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_x2"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">3</attribute>
                           </attributes>
                         </child>
@@ -443,7 +436,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_y2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">4</attribute>
                           </attributes>
                         </child>
@@ -455,7 +447,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_z2"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">5</attribute>
                           </attributes>
                         </child>
@@ -467,7 +458,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_a2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">6</attribute>
                           </attributes>
                         </child>
@@ -479,7 +469,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_b2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">7</attribute>
                           </attributes>
                         </child>
@@ -491,7 +480,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_c2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">8</attribute>
                           </attributes>
                         </child>
@@ -503,7 +491,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_u2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">9</attribute>
                           </attributes>
                         </child>
@@ -515,7 +502,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_v2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">10</attribute>
                           </attributes>
                         </child>
@@ -527,7 +513,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_w2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">11</attribute>
                           </attributes>
                         </child>
@@ -543,7 +528,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_d2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">12</attribute>
                           </attributes>
                         </child>
@@ -555,7 +539,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_front2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">13</attribute>
                           </attributes>
                         </child>
@@ -567,7 +550,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_back2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">14</attribute>
                           </attributes>
                         </child>
@@ -579,7 +561,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_orient2"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">15</attribute>
                           </attributes>
                         </child>
@@ -591,7 +572,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_comments2"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">16</attribute>
                           </attributes>
                         </child>
@@ -606,7 +586,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="wear_label">
-                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Lathe Wear Offsets</property>
               </object>
               <packing>
@@ -616,7 +596,6 @@
             </child>
             <child>
               <object class="GtkScrolledWindow" id="tool_window">
-                <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
@@ -657,7 +636,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_pos3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">2</attribute>
                           </attributes>
                         </child>
@@ -669,7 +647,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_x3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">3</attribute>
                           </attributes>
                         </child>
@@ -681,7 +658,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_y3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">4</attribute>
                           </attributes>
                         </child>
@@ -693,7 +669,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_z3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">5</attribute>
                           </attributes>
                         </child>
@@ -705,7 +680,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_a3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">6</attribute>
                           </attributes>
                         </child>
@@ -717,7 +691,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_b3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">7</attribute>
                           </attributes>
                         </child>
@@ -729,7 +702,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_c3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">8</attribute>
                           </attributes>
                         </child>
@@ -741,7 +713,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_u3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">9</attribute>
                           </attributes>
                         </child>
@@ -753,7 +724,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_v3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">10</attribute>
                           </attributes>
                         </child>
@@ -765,7 +735,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_w3"/>
                           <attributes>
-                            <attribute name="editable">0</attribute>
                             <attribute name="text">11</attribute>
                           </attributes>
                         </child>
@@ -781,7 +750,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_d3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">12</attribute>
                           </attributes>
                         </child>
@@ -793,7 +761,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_front3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">13</attribute>
                           </attributes>
                         </child>
@@ -805,7 +772,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_back3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">14</attribute>
                           </attributes>
                         </child>
@@ -817,7 +783,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_orient3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">15</attribute>
                           </attributes>
                         </child>
@@ -829,7 +794,6 @@
                         <child>
                           <object class="GtkCellRendererText" id="cell_comments3"/>
                           <attributes>
-                            <attribute name="editable">1</attribute>
                             <attribute name="text">16</attribute>
                           </attributes>
                         </child>
@@ -844,7 +808,7 @@
             </child>
             <child type="tab">
               <object class="GtkLabel" id="tool_label">
-                <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Lathe Tool Offsets</property>
               </object>
               <packing>
@@ -854,6 +818,8 @@
             </child>
           </object>
           <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
