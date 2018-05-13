@@ -346,15 +346,15 @@ static void process_inputs(void)
         double adaptive_feed_out = fabs(adaptive_feed_in);
 
         // Case 1: positive to negative direction change
-        if ( adaptive_feed_in < 0.0 && emcmotDebug->tp.reverse_run == TC_DIR_FORWARD) {
+        if ( adaptive_feed_in < 0.0 && emcmotDebug->coord_tp.reverse_run == TC_DIR_FORWARD) {
             // User commands feed in reverse direction, but we're not running in reverse yet
-            if (tpSetRunDir(&emcmotDebug->tp, TC_DIR_REVERSE) != TP_ERR_OK) {
+            if (tpSetRunDir(&emcmotDebug->coord_tp, TC_DIR_REVERSE) != TP_ERR_OK) {
                 // Need to decelerate to a stop first
                 adaptive_feed_out = 0.0;
             }
-        } else if (adaptive_feed_in > 0.0 && emcmotDebug->tp.reverse_run == TC_DIR_REVERSE ) {
+        } else if (adaptive_feed_in > 0.0 && emcmotDebug->coord_tp.reverse_run == TC_DIR_REVERSE ) {
             // User commands feed in forward direction, but we're running in reverse
-            if (tpSetRunDir(&emcmotDebug->tp, TC_DIR_FORWARD) != TP_ERR_OK) {
+            if (tpSetRunDir(&emcmotDebug->coord_tp, TC_DIR_FORWARD) != TP_ERR_OK) {
                 // Need to decelerate to a stop first
                 adaptive_feed_out = 0.0;
             }
