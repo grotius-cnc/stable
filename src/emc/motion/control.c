@@ -2092,7 +2092,7 @@ static void update_status(void)
        don't know how much is still needed, and how much is baggage.
     */
 
-    emcmotStatus->reverse_run = emcmotDebug->tp.reverse_run;
+    emcmotStatus->reverse_run = emcmotDebug->coord_tp.reverse_run;
 
     /* motion emcmotDebug->coord_tp status */
     emcmotStatus->depth = tpQueueDepth(&emcmotDebug->coord_tp);
