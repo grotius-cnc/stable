@@ -75,7 +75,7 @@ class SpeedControl(gtk.VBox, _HalSpeedControlBase):
         'value' : (gobject.TYPE_FLOAT, 'Value', 'The  value to set',
                     0.001, 99999.0, 10.0, gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT),
         'min' : (gobject.TYPE_FLOAT, 'Min Value', 'The min allowed value to apply',
-                    0.0, 99999.0, 0.0, gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT),
+                    -1, 99999.0, 0.0, gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT),
         'max' : (gobject.TYPE_FLOAT, 'Max Value', 'The max allowed value to apply',
                     0.001, 99999.0, 100.0, gobject.PARAM_READWRITE | gobject.PARAM_CONSTRUCT),
         'increment' : (gobject.TYPE_FLOAT, 'Increment Value', 'The increment value to apply, -1 means 100 steps from max to min',
