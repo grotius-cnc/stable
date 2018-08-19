@@ -78,6 +78,9 @@ $ sudo make setuid
 Running LinuxCNC
 Setup the RIP environment
 
+Okey now goto the bin folder of your brand new linuxcnc run in place directory 
+and select the file "grotius" mark this file as executable, right mouse click and select option execute as program"
+
 $ . ../scripts/. ./rip-environment   Use this command in terminal :  . ./rip-environment 
 You need to run this each time you open a new terminal.
 Launch LinuxCNC
@@ -88,4 +91,6 @@ LinuxCNC will print the version that is running, check that it is what you expec
 
 When linuxcnc starts up, goto sim/grotius/grotius_no_home.ini
 Make desktop shortcut.
+
+
 
