@@ -93,5 +93,19 @@ LinuxCNC will print the version that is running, check that it is what you expec
 When linuxcnc starts up, goto sim/grotius/grotius_no_home.ini
 Make desktop shortcut.
 
+For your g-code post processor :
+
+Your g-code file for usage with this linuxcnc version looks like :
+
+G21 (mm)
+M3 (start torch)
+G01 x0 y0
+G01 x100 y100
+m5 (stop torch)
+
+A g-code from inkscape can be used directly !!
+
+
+
 
 
