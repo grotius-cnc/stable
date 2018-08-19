@@ -1652,19 +1652,7 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="HAL_Label" id="M">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">0</property>
-                                  </object>
-                                  <packing>
-                                    <property name="right_attach">2</property>
-                                    <property name="top_attach">4</property>
-                                    <property name="bottom_attach">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="HAL_HScale" id="Cut_chart_voltage">
+                                  <object class="HAL_HScale" id="Cut_chart_voltage ">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">Adj-Cut_chart_voltage</property>
@@ -1752,6 +1740,19 @@ acceleration</property>
                                     <property name="right_attach">2</property>
                                     <property name="top_attach">3</property>
                                     <property name="bottom_attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="HAL_Label" id="Mesa_raw_voltage ">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">0</property>
+                                    <property name="label_pin_type">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
                                   </packing>
                                 </child>
                               </object>
