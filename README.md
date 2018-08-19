@@ -71,7 +71,7 @@ $ ./autogen.sh
 $ ./configure
 Make
 
-$ make -j4
+$ make -j4   (-j4 = quadcore, -j2 = dual core processor)
 
 Allow access to hardware
 $ sudo make setuid
