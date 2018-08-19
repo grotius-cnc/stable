@@ -78,7 +78,7 @@ $ sudo make setuid
 Running LinuxCNC
 Setup the RIP environment
 
-$ . ../scripts/rip-environment
+$ . ../scripts/. ./rip-environment   Use this command in terminal :  . ./rip-environment 
 You need to run this each time you open a new terminal.
 Launch LinuxCNC
 
