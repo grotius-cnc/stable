@@ -42,17 +42,9 @@ $ git clone https://github.com/michelwijnja/external_offsets_adaptive_feed.git l
 Then enter the new directory
 
 $ cd linuxcnc-grotius
-
-The default branch is master (2.8~pre). To build another branch you have to switch to it. For example, to build current stable (2.7) you would first fetch (download) and then switch to the 2.7 branch by saying
-
-$ git fetch origin 2.7
-$ git checkout 2.7
-Configure
-
-Next configure how the code should be compiled. You should configure for uspace when compiling for vanilla and Preempt-RT kernels, if you are running an RTAI kernel than use -r instead.
-
 $ cd debian
 $ ./configure uspace
+
 Install build dependencies
 
 $ cd ..
@@ -72,7 +64,7 @@ $ ./autogen.sh
 $ ./configure
 Make
 
-$ make -j4   (-j4 = quadcore, -j2 = dual core processor)
+$ make -j2   (-j4 = quadcore, -j2 = dual core processor)
 
 Allow access to hardware
 $ sudo make setuid
