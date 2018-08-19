@@ -3,6 +3,12 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-requires gladevcp 0.0 -->
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkAdjustment" id="Adj-Cut_chart_voltage">
+    <property name="upper">350</property>
+    <property name="value">120</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="Adj-Cutheight">
     <property name="upper">50</property>
     <property name="step_increment">1</property>
@@ -1619,7 +1625,7 @@
                               <object class="GtkTable" id="table5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="n_rows">8</property>
+                                <property name="n_rows">7</property>
                                 <property name="n_columns">2</property>
                                 <child>
                                   <object class="GtkButton" id="torch_on">
@@ -1646,6 +1652,71 @@
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="HAL_Label" id="M">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">4</property>
+                                    <property name="bottom_attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="HAL_HScale" id="Cut_chart_voltage">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="adjustment">Adj-Cut_chart_voltage</property>
+                                    <property name="round_digits">0</property>
+                                    <property name="digits">0</property>
+                                  </object>
+                                  <packing>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">6</property>
+                                    <property name="bottom_attach">7</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label24">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Mesa Cut chart voltage
+See tabel or try some
+value</property>
+                                  </object>
+                                  <packing>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">5</property>
+                                    <property name="bottom_attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="HAL_HScale" id="Max_z_speed">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="adjustment">Adj-Max_Z_speed</property>
+                                    <property name="round_digits">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="label21">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Max Z Speed</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="right_attach">2</property>
+                                    <property name="top_attach">1</property>
+                                    <property name="bottom_attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="HAL_HScale" id="Max_z_acceleration">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -1653,8 +1724,8 @@
                                     <property name="round_digits">1</property>
                                   </object>
                                   <packing>
-                                    <property name="top_attach">4</property>
-                                    <property name="bottom_attach">5</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -1667,64 +1738,21 @@ acceleration</property>
                                   <packing>
                                     <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
-                                    <property name="top_attach">4</property>
-                                    <property name="bottom_attach">5</property>
+                                    <property name="top_attach">2</property>
+                                    <property name="bottom_attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="label21">
+                                  <object class="GtkLabel" id="label23">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
-                                    <property name="label" translatable="yes">Max Z Speed</property>
+                                    <property name="label" translatable="yes">Mesa Arc Voltage In</property>
                                   </object>
                                   <packing>
-                                    <property name="left_attach">1</property>
                                     <property name="right_attach">2</property>
                                     <property name="top_attach">3</property>
                                     <property name="bottom_attach">4</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <object class="HAL_HScale" id="Max_z_speed">
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="adjustment">Adj-Max_Z_speed</property>
-                                    <property name="round_digits">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="top_attach">3</property>
-                                    <property name="bottom_attach">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -1735,7 +1763,7 @@ acceleration</property>
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="ypad">7</property>
-                            <property name="label" translatable="yes">&lt;b&gt;Outputs&lt;/b&gt;</property>
+                            <property name="label" translatable="yes">&lt;b&gt;Settings&lt;/b&gt;</property>
                             <property name="use_markup">True</property>
                           </object>
                         </child>
