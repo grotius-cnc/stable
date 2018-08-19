@@ -41,7 +41,7 @@ $ git clone https://github.com/michelwijnja/external_offsets_adaptive_feed.git l
 
 Then enter the new directory
 
-$ cd linuxcnc-dev
+$ cd linuxcnc-grotius
 
 The default branch is master (2.8~pre). To build another branch you have to switch to it. For example, to build current stable (2.7) you would first fetch (download) and then switch to the 2.7 branch by saying
 
