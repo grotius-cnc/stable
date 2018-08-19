@@ -23,6 +23,7 @@ See the file COPYING for more details.
 
 Building LinuxCNC From Source
 Kurt Jacobson edited this page on May 30 · 10 revisions
+Michel Wijnja edited this page on August 19, 2018, multiple revisions
 Introduction
 
 These are the steps to build a Run-In-Place (RIP) version of LinuxCNC from source. This is the best way to try out the LinuxCNC development branches as it does not effect any installed version of LinuxCNC. RIP also makes it very easy to rebuild LinuxCNC to include any modifications to the source. If you have modified a file, simply run make in the src directory to compile the changes. Only the modified files will be re-compiled, so it should make fast allowing for rapid iteration of changes.
