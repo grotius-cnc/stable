@@ -86,3 +86,6 @@ $ linuxcnc
 
 LinuxCNC will print the version that is running, check that it is what you expected.
 
+When linuxcnc starts up, goto sim/grotius/grotius_no_home.ini
+Make desktop shortcut.
+
