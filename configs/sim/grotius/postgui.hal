@@ -1,0 +1,76 @@
+#Postgui.hal file, designed for Torch Height Control, Grotius CNC Machines 19 August 2018.
+
+loadrt THC2
+addf THC2 servo-thread
+
+loadrt siggen         names=gen
+loadrt scale          count=2
+loadrt conv_float_s32 names=cvt
+
+addf   gen.update     servo-thread
+addf   scale.0        servo-thread
+addf   cvt            servo-thread
+
+
+setp gen.offset       0.0
+
+# scaling -----------------------------------------------------------
+# these should be reciprocals:
+# 1 unit (inch)  -->            10000 counts
+setp axis.z.eoffset-scale       0.0001
+setp scale.0.gain               10000
+       
+net  G:scale                    THC2.Offset                   scale.0.in                
+net  G:conv_float_s32           scale.0.out                   THC2.Zpos-in 
+
+net  G:output_to_z              THC2.Zpos-out                 cvt.in
+net  G:convert                  cvt.out                       axis.z.eoffset-counts
+
+setp axis.z.eoffset-enable      True
+
+net  G:Max_z_speed               ini.z.max_velocity           grotius_gui.Max_z_speed
+net  G:Max_z_acceleration        ini.z.max_acceleration       grotius_gui.Max_z_acceleration
+#setp ini.z.max_acceleration     500
+#setp ini.z.max_velocity         500
+
+net  THC2-Pause-machine         THC2.Pause-machine            motion.feed-inhibit         
+#net  THC2-Requestedspeed        THC2.current-vel              motion.current-vel     
+#net  THC2-Adaptive-feed         THC2.adaptive-feed            motion.adaptive-feed 
+
+
+net  spindle-cw                 THC2.Torch-on-in  
+net  THC2-Enable                THC2.Enable                   grotius_gui.Enable
+           
+net  THC2-Torch-on-out          THC2.Torch-on-out             grotius_gui.Torch_on_led           parport.0.pin-17-out  
+net  THC2-Probe-in              THC2.Probe-in                 grotius_gui.Probe_led              parport.0.pin-15-in 
+net  THC2-Arc-ok-in             THC2.Arc-ok-in                grotius_gui.Arc_ok_led             parport.0.pin-12-in-not                                      
+net  THC2-Torch-up              THC2.Torch-up                 grotius_gui.Torch_up_led           parport.0.pin-13-in-not        
+net  THC2-Torch-down            THC2.Torch-down               grotius_gui.Torch_down_led         parport.0.pin-11-in-not                                  
+
+net  THC2-Axis-z-eoffset        THC2.Axis-z-eoffset           axis.z.eoffset
+net  THC2-Up-down-resolution    THC2.Up-down-resolution       grotius_gui.Up_down_resolution
+                  
+net  THC2-Travelheight          THC2.Travelheight             grotius_gui.Travel_height
+net  THC2-Cutheight             THC2.Cutheight                grotius_gui.Cut_height
+net  THC2-Pierceheight          THC2.Pierceheight             grotius_gui.Pierce_height
+net  THC2-Piercedelay           THC2.Piercedelay              grotius_gui.Pierce_delay
+#et  THC2-Piercespeed           THC2.Piercespeed              grotius_gui.Pierce_speed
+#et  THC2-Maxspeed              THC2.Maxspeed                 grotius_gui.Max_z_speed
+net  THC2-Probe-enable          THC2.Probe-enable             grotius_gui.Probe_enable
+net  THC2-Parport               THC2.Parport                  grotius_gui.Parport
+net  THC2-Mesa                  THC2.Mesa                     grotius_gui.Mesa
+
+
+net  THC2-Probe-z-search-limit  THC2.Probe-search-limit       grotius_gui.Probe_search_limit
+net  THC2-Probe-switch-offset   THC2.Probe-switch-offset      grotius_gui.Probe_switch_offset
+net  THC2-Piercetime-reached    THC2.Piercetime-reached       grotius_gui.Pierce_time_led
+
+net  THC2-Reset-offsets         THC2.Reset-offsets            axis.z.eoffset-clear 
+           
+
+
+
+
+
+
+
