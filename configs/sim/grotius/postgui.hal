@@ -67,8 +67,13 @@ net  THC2-Probe-switch-offset   THC2.Probe-switch-offset      grotius_gui.Probe_
 net  THC2-Piercetime-reached    THC2.Piercetime-reached       grotius_gui.Pierce_time_led
 
 net  THC2-Reset-offsets         THC2.Reset-offsets            axis.z.eoffset-clear 
-           
 
+net  THC2-Axis_x_pos_cmd        THC2.Axis-x-pos-cmd           axis.x.pos-cmd
+net  THC2-Axis_y_pos_cmd        THC2.Axis-y-pos-cmd           axis.y.pos-cmd  
+net  THC2-Dist-x                THC2.Dist-x                   grotius_gui.Dist_x
+net  THC2-Dist-y                THC2.Dist-y                   grotius_gui.Dist_y        
+
+net  THC2-probe-over-distance   THC2.Probe-over-distance-yes  grotius_gui.Probe_next_xy  
 
 
 
