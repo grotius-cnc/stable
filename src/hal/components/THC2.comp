@@ -14,7 +14,7 @@ Todo :
  
 1. Restart procedure
 2. THC at speed, motion.current-vel 
-3. Probe distance xy function
+3. //Probe distance xy function
 
 
 """;
@@ -68,8 +68,25 @@ pin in float  Cut_chart_voltage       "Screen input value related to plasma defi
 
 pin out bit   Pause_machine           "Connect to motion.feed-hold-inhibited";
 
+//probe distance function input, not probing every start, but probe again when xy distance is reached :
+pin out bit Probe_this_start          "We must probe next start, our calculation has reached over the xy limits";
+pin in float Axis_x_pos_cmd           "Connect to axis.x.pos-cmd";
+pin in float Axis_y_pos_cmd           "Connect to axis.x.pos-cmd";
+pin in float Dist_x                   "Connect to user gui, maximum input value over x axis";
+pin in float Dist_y                   "Connect to user gui, maximum input value over y axis";
+pin out float Snapshot_x_pos          "Monitoring if snapshot is done";
+pin out float Snapshot_y_pos          "Monitoring if snapshot is done";
+//pin out bit Snapshot;
+
+
 variable double time;
 variable float Count;  // for restart procedure 
+
+pin out bit Probe_over_distance_yes;
+pin out bit Probe_over_distance_no;
+
+
+ 
 
 function _;
 
@@ -77,36 +94,58 @@ function _;
 
 #include "rtapi_math.h"
 
+typedef enum { INIT, SELECT, PROBE, NO_PROBE, NORMAL_CUTTING} state_T;
+state_T state = INIT;
+
 FUNCTION(_) {  
+
+
 
     Zpos_out = Zpos_in;
 
-    if(!Enable){  // Turn off external offsets and substract offsets.
-                    Reset_offsets = 1; 
-                    Offset = 0;  
-                    Probe_trigger = 0; 
-                    Torch_on_out = 0;
-                    Piercetime_reached = 0;
-                    time = 0;
-                    Pause_machine = 0;    
-    }
+    switch(state){
 
-    if(Enable){  // Turn on external offsets with out enable pin. 
-                if(Torch_on_out){
-                    time += fperiod;
-                    }                     
-                if(time >= Piercedelay){ 
-                    Piercetime_reached = 1;
-                    }
-                if(!Torch_on_in){
-                    time = 0; Piercetime_reached = 0;
-                    } 
-                    Reset_offsets = 0; 
+    case INIT:
+        if(Enable){
 
+            if(Torch_on_out){
+                time += fperiod;
+                }                     
+            if(time >= Piercedelay){ 
+                Piercetime_reached = 1;
+                }
+            if(!Torch_on_in){
+                time = 0; Piercetime_reached = 0;
+                } 
+            Reset_offsets = 0; 
+            state = SELECT;
 
-    }    
+            }
 
-    if(Probe_enable && Enable){  
+        if(!Enable){  // Turn off external offsets and substract offsets.
+            Reset_offsets = 1; 
+            Offset = 0;  
+            Probe_trigger = 0; 
+            Torch_on_out = 0;
+            Piercetime_reached = 0;
+            time = 0;
+            Pause_machine = 0;   
+
+            state = INIT;                
+            } 
+        break;
+
+    case SELECT:
+        if(Probe_enable && Axis_x_pos_cmd > Snapshot_x_pos + Dist_x || Axis_x_pos_cmd < Snapshot_x_pos - Dist_x || Axis_y_pos_cmd > Snapshot_y_pos + Dist_y || Axis_y_pos_cmd < Snapshot_y_pos - Dist_y){        
+            state = PROBE;
+            } else if (Probe_enable){state = NO_PROBE;}
+        if(!Probe_enable)
+            state = NORMAL_CUTTING;
+        break;
+   
+    case PROBE:
+        Probe_over_distance_yes = 1;
+        Probe_over_distance_no = 0;
 
                 // General section :
                 if(!Torch_on_in){
@@ -131,6 +170,10 @@ FUNCTION(_) {
                 if(Torch_on_in && !Torch_on_out && Probe_trigger){ // goto pierceheight.
                     Offset = Zpos_probe + Probe_switch_offset + Pierceheight;
                     Pause_machine = 1;
+                            if(Probe_trigger){ 
+                                Snapshot_x_pos = Axis_x_pos_cmd; // save current probe position for probing over new distance
+                                Snapshot_y_pos = Axis_y_pos_cmd; // save current probe position for probing over new distance
+                                }
                     }                  
                 if(Torch_on_in && !Torch_on_out && Probe_trigger && ( (Axis_z_eoffset >(Zpos_probe + Probe_switch_offset + Pierceheight-0.1)) && (Axis_z_eoffset <(Zpos_probe + Probe_switch_offset + Pierceheight+0.1)) ) ){  // if no torch on in goto travelheight.
                     Torch_on_out = 1;
@@ -214,10 +257,115 @@ FUNCTION(_) {
                     Pause_machine = 1;
                     }
 
-    }
-   
-    if(!Probe_enable && Enable){  
-        
+
+        state = INIT;
+        break;
+    case NO_PROBE:
+        Probe_over_distance_yes = 0;
+        Probe_over_distance_no = 1;
+
+                // General section :
+                if(!Torch_on_in){
+                    Offset = Travelheight;
+                    Pause_machine = 1;
+                    Torch_on_out = 0;
+                    Cutting_trigger = 0;
+                    Probe_trigger = 0;
+                    }      
+                if(!Torch_on_in && ( (Axis_z_eoffset >(Travelheight-0.1)) && (Axis_z_eoffset <(Travelheight+0.1)) ) ){  // if no torch on in goto travelheight.
+                    Pause_machine = 0;
+                    }      
+                if(Torch_on_in && !Torch_on_out){ // search for probe.
+                    Offset = Zpos_probe + Probe_switch_offset + Pierceheight;
+                    Pause_machine = 1;
+                    }                  
+                if(Torch_on_in && !Torch_on_out && ( (Axis_z_eoffset >(Zpos_probe + Probe_switch_offset + Pierceheight-0.1)) && (Axis_z_eoffset <(Zpos_probe + Probe_switch_offset + Pierceheight+0.1)) ) ){  // if no torch on in goto travelheight.
+                    Torch_on_out = 1;
+                    Pause_machine = 1;  // at pierceheight.           
+                    }      
+                if(Torch_on_in && Torch_on_out && Piercetime_reached){ // goto cutheight.
+                    Offset = Zpos_probe + Probe_switch_offset + Cutheight;              
+                    Pause_machine = 1;              
+                    }     
+
+                // Parport section: 
+                if(Parport && Torch_on_in && Torch_on_out && Piercetime_reached && Arc_ok_in && ( (Axis_z_eoffset >(Zpos_probe + Probe_switch_offset + Cutheight-0.1)) && (Axis_z_eoffset <(Zpos_probe + Probe_switch_offset + Cutheight+0.1)) ) ){  
+                    Pause_machine = 0;  // at cutheight, move.           
+                    Cutting_trigger = 1;
+                    }  
+                if(Parport && Torch_on_in && Torch_on_out && Piercetime_reached && !Arc_ok_in){  
+                    Pause_machine = 1;  // at cutheight, arc lost, don't move.    
+                    Cutting_trigger = 0;       
+                    }  
+                if(Parport && Torch_up && Torch_on_out && Cutting_trigger && (Axis_z_eoffset <= Travelheight) ){ // torch up and limited to travelheight.
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    Pause_machine = 0;
+                    }
+                if(Parport && Torch_down && Torch_on_out && Cutting_trigger && (Axis_z_eoffset >= Probe_search_limit) ){ // torch down and limited to probe search limit.
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    Pause_machine = 0;
+                    }
+                if(Parport && !Torch_down && !Torch_up && Torch_on_out && Cutting_trigger){ // if no torch up or down, stay at current height.
+                    Offset = Axis_z_eoffset;
+                    Pause_machine = 0;
+                    }
+
+                // Parport arc lost section during cutting :
+                if(Parport && !Arc_ok_in && Torch_up && Torch_on_out && Cutting_trigger && (Axis_z_eoffset <= Travelheight) ){ // torch up and limited to travelheight.
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    Pause_machine = 1;
+                    }
+                if(Parport && !Arc_ok_in && Torch_down && Torch_on_out && Cutting_trigger && (Axis_z_eoffset >= Probe_search_limit) ){ // torch down and limited to probe search limit.
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    Pause_machine = 1;
+                    }
+                if(Parport && !Arc_ok_in && !Torch_down && !Torch_up && Torch_on_out && Cutting_trigger){ // if no torch up or down, stay at current height.
+                    Offset = Axis_z_eoffset;
+                    Pause_machine = 1;
+                    }
+
+
+                // Mesa section:
+                if(Mesa && Torch_on_in && Torch_on_out && Piercetime_reached && Mesa_raw_voltage > 10 && ( (Axis_z_eoffset >(Zpos_probe + Probe_switch_offset + Cutheight-0.1)) && (Axis_z_eoffset <(Zpos_probe + Probe_switch_offset + Cutheight+0.1)) ) ){  
+                    Pause_machine = 0;  // at cutheight, move.     
+                    Cutting_trigger = 1;      
+                    }  
+                if(Mesa && Torch_on_in && Torch_on_out && Piercetime_reached && !Mesa_raw_voltage > 10){  
+                    Pause_machine = 1;  // arc lost, don't move.    
+                    Cutting_trigger = 0;       
+                    }  
+                if(Mesa && Mesa_raw_voltage < Cut_chart_voltage && Torch_on_out && Cutting_trigger && (Axis_z_eoffset <= Travelheight) ){ // torch up and limited to travelheight.
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    Pause_machine = 0;
+                    }
+                if(Mesa && Mesa_raw_voltage > Cut_chart_voltage && Torch_on_out && Cutting_trigger && (Axis_z_eoffset >= Probe_search_limit) ){ // torch down and limited to probe search limit.
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    Pause_machine = 0;
+                    }
+                if(Mesa && Mesa_raw_voltage == Cut_chart_voltage && Torch_on_out && Cutting_trigger){ // if no torch up or down, stay at current height.
+                    Offset = Axis_z_eoffset;
+                    Pause_machine = 0;
+                    }
+
+                // Mesa arc lost section during cutting :
+                if(Mesa && !Arc_ok_in && Mesa_raw_voltage < Cut_chart_voltage && Torch_on_out && Cutting_trigger && (Axis_z_eoffset <= Travelheight) ){ // torch up and limited to travelheight.
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    Pause_machine = 1;
+                    }
+                if(Mesa && !Arc_ok_in && Mesa_raw_voltage > Cut_chart_voltage && Torch_on_out && Cutting_trigger && (Axis_z_eoffset >= Probe_search_limit) ){ // torch down and limited to probe search limit.
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    Pause_machine = 1;
+                    }
+                if(Mesa && !Arc_ok_in && Mesa_raw_voltage == Cut_chart_voltage && Torch_on_out && Cutting_trigger){ // if no torch up or down, stay at current height.
+                    Offset = Axis_z_eoffset;
+                    Pause_machine = 1;
+                    }
+        state = INIT;
+        break;
+
+    case NORMAL_CUTTING:
+        Probe_over_distance_yes = 0;
+        Probe_over_distance_no = 1;
                 // General section :
                 if(!Torch_on_in){
                     Offset = Travelheight;
@@ -313,8 +461,13 @@ FUNCTION(_) {
                     Offset = Axis_z_eoffset;
                     Pause_machine = 1;
                     }
-    }
 
+
+
+        state = INIT;
+        break;    
+
+    }     
 
     }
 
