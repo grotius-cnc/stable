@@ -1,0 +1,298 @@
+component THC2 "Torch Height Control 2";
+
+description 
+"""
+
+Component torch height control for stepper and servo controlled machines.
+Compatible with external offset branche.
+https://github.com/michelwijnja/external_offsets_adaptive_feed
+
+Designed for Parport LTP1 boards with Proma or a Thc module with arc-ok, torch-up and torch-down signal
+Designed for Mesa and other boards with raw arc voltage input.
+
+Todo :
+ 
+1. Restart procedure
+2. THC at speed, motion.current-vel 
+3. //Probe distance xy function
+
+
+""";
+ 
+author "Grotius CNC Machines";
+
+license "GPLv2 or greater";
+
+option singleton yes;
+
+// Input Pins
+pin in bit    Enable                  "Enable THC2 component";
+pin out bit   Reset_offsets           "Reset offsets to orginal condition when component is not enable";
+pin in bit    Probe_enable            "Connected to user interface button";
+pin in bit    Parport                 "Connected to user interface button select Parport or Mesa input";
+pin in bit    Mesa                    "Connected to user interface button select Parport or Mesa input";
+
+pin in float  Zpos_in                 "";
+pin out float Zpos_out                "";
+
+pin in float  Travelheight            "Z axis travelheigt in";
+pin in float  Cutheight               "Z axis cut height in";
+pin out float Maxspeed                "Z axis speed out 0 to 100, for info only";
+pin out float ProbeSpeed              "Z axis probing speed";
+pin out float Speed                   "Z axis current speed, for info only";
+pin in float  Piercespeed             "Z axis pierce speed in 0 to 100.";
+pin in float  Piercedelay             "Z axis pierce delay time in seconds";
+pin out bit   Piercetime_reached      "Piercetime reached";
+pin in float  Up_down_resolution      "When Torch up, then correction 0.1mm or 1mm resolution";
+
+pin in float  Axis_z_eoffset          "Connected to external offsets z real time current z axis position input";
+pin in float  Pierceheight            "the pierce height value in mm";
+pin out float Offset                  "Z axis Offset command to external offsets, the z axis is moving to this offset when set, even in pause";
+pin in bit    Torch_on_in             "Connected to spindle-cw";
+
+pin out bit   Probe_trigger           "If probe is triggered this pin becomes high";
+pin out bit   Cutting_trigger         "At cutheight and cutting";
+pin in float  Probe_search_limit      "Connected to user interface input, z axis probe end limit. For example Z -10 = probing to max Z-10.";
+pin in float  Probe_switch_offset     "Probe sensor switch correction value, positive z-value";
+pin out float Zpos_probe              "Z value when probe was triggered";
+pin in float  Restart_attempts        "3 for example";
+
+pin in bit    Arc_ok_in               "Parport connections in  12";
+pin in bit    Torch_up                "Parport connections in  13";
+pin in bit    Torch_down              "Parport connections in  11";
+pin in bit    Probe_in                "Parport connections in  15";
+pin out bit   Torch_on_out            "Parport connections out 17";
+
+pin in float  Mesa_raw_voltage        "Connect to Mesa input, this is also a arc-ok-in signal when voltage appears";
+pin in float  Cut_chart_voltage       "Screen input value related to plasma defined cutting charts";
+
+pin out bit   Pause_machine           "Connect to motion.feed-hold-inhibited";
+
+//probe distance function input, not probing every start, but probe again when xy distance is reached :
+pin out bit Probe_this_start          "We must probe next start, our calculation has reached over the xy limits";
+pin in float Axis_x_pos_cmd           "Connect to axis.x.pos-cmd";
+pin in float Axis_y_pos_cmd           "Connect to axis.x.pos-cmd";
+pin in float Dist_x                   "Connect to user gui, maximum input value over x axis";
+pin in float Dist_y                   "Connect to user gui, maximum input value over y axis";
+pin out float Snapshot_x_pos          "Monitoring if snapshot is done";
+pin out float Snapshot_y_pos          "Monitoring if snapshot is done";
+//pin out bit Snapshot;
+
+
+variable double time;
+variable float Count;  // for restart procedure 
+
+pin out bit Probe_over_distance_yes;
+pin out bit Probe_over_distance_no;
+
+pin in bit Enable_auto_restart;
+pin in float Auto_restart_times;
+pin out float Auto_restart_counter;
+
+
+ 
+
+function _;
+
+;;
+
+#include "rtapi_math.h"
+
+typedef enum { INIT, TRAVELHEIGHT, TORCH_START, SELECT, PROBE, NO_PROBE, NORMAL_CUTTING, PIERCEHEIGHT, PIERCEDELAY, PIERCING, CUTHEIGHT, TORCH_UP_DOWN, RESTART, TORCH_STOP} state_T;
+state_T state = INIT;
+
+FUNCTION(_) {  
+
+
+/*
+                PROGRAM FLOW DIAGRAM :
+
+                state = INIT;           
+                state = TRAVELHEIGHT;   
+                state = TORCH_START;                                        
+                state = SELECT;        
+                        state = PROBE;
+                        state = NO_PROBE;
+                        state = NORMAL_CUTTING; 
+                state = PIERCEHEIGHT;
+                state = PIERCEDELAY;
+                state = PIERCING;
+                state = CUTHEIGHT;
+                state = TORCH_UP_DOWN;
+                state = RESTART; //                 => state = TORCH_START
+                state = TORCH_STOP //               => state = TRAVELHEIGHT
+             
+*/
+   
+
+    Zpos_out = Zpos_in;
+
+    switch(state){
+
+    case INIT:
+                if(Enable){
+                Reset_offsets = 0; 
+                state = TRAVELHEIGHT;
+                }
+            if(!Enable){  // Turn off external offsets and substract offsets.
+                Reset_offsets = 1; 
+                Offset = 0;  
+                Probe_trigger = 0; 
+                Torch_on_out = 0;
+                Piercetime_reached = 0;
+                time = 0;
+                Pause_machine = 0;   
+                state = INIT;                
+                } 
+            break;
+
+    case TRAVELHEIGHT:
+            Offset = Travelheight;
+            if( (Axis_z_eoffset > (Travelheight-0.1)) && (Axis_z_eoffset <(Travelheight+0.1)) ){
+                Pause_machine = 0;
+                } else {Pause_machine = 1;}
+                state = TORCH_START;
+            break;
+
+    case TORCH_START:
+            if(Torch_on_in && !Torch_on_out && ( (Axis_z_eoffset > (Pierceheight-0.1)) && (Axis_z_eoffset <(Pierceheight+0.1)) ) ){
+                Torch_on_out = 1;
+                time = 0; // reset timer for pierce delay
+                state = SELECT; 
+                } 
+            break;
+
+    case SELECT:
+            if(Probe_enable && Axis_x_pos_cmd > Snapshot_x_pos + Dist_x || Axis_x_pos_cmd < Snapshot_x_pos - Dist_x || Axis_y_pos_cmd > Snapshot_y_pos + Dist_y || Axis_y_pos_cmd < Snapshot_y_pos - Dist_y){        
+                state = PROBE;
+                } else if (Probe_enable){state = NO_PROBE;}
+            if(!Probe_enable)
+                state = NORMAL_CUTTING;
+            break;
+
+    case PROBE:
+            if(Probe_enable){
+                Offset = Probe_search_limit;
+                    if(Probe_in){
+                        Zpos_probe = Axis_z_eoffset + Probe_switch_offset;
+                        }               
+                }
+                state = PIERCEHEIGHT;
+            break;
+
+    case NO_PROBE: // this is part of probe over distance function.
+            if(Probe_enable){ 
+                // use previous probe height.  
+                }
+                state = PIERCEHEIGHT;
+            break;
+
+    case NORMAL_CUTTING:
+            if(!Probe_enable){
+                // use standard pierceheigt.
+                }
+                state = PIERCEHEIGHT;
+            break;
+
+    case PIERCEHEIGHT:
+            if(Probe_enable){
+                Offset = Pierceheight + Zpos_probe;
+                if( Axis_z_eoffset > ((Pierceheight + Zpos_probe)-0.1) && Axis_z_eoffset < ((Pierceheight + Zpos_probe)+0.1)){
+                    Pause_machine = 0;
+                    } else {Pause_machine = 1;}
+                } 
+            else if (!Probe_enable){
+                Offset = Pierceheight;
+                if( Axis_z_eoffset > (Pierceheight-0.1) && Axis_z_eoffset < (Pierceheight+0.1)){
+                    Pause_machine = 0;
+                    } else {Pause_machine = 1;}
+                }
+                state = PIERCEDELAY;
+            break; 
+
+    case PIERCEDELAY:
+            time += fperiod;
+            if(time > Piercedelay){
+                time = 0; // reset piercedelay timer for next start.
+                state = PIERCING;
+                } else {state = PIERCEDELAY;} // loop until piercetime is ok.
+            break;
+
+    case PIERCING:
+            // Speed = Piercespeed;
+            if(Probe_enable){
+                Offset = Cutheight + Zpos_probe;
+                if( Axis_z_eoffset > ((Cutheight  + Zpos_probe)-0.1) && Axis_z_eoffset < ((Cutheight  + Zpos_probe)+0.1)){
+                    Pause_machine = 0;
+                    } else {Pause_machine = 1;}
+                } 
+            else if (!Probe_enable){
+                Offset = Cutheight ;
+                if( Axis_z_eoffset > (Cutheight -0.1) && Axis_z_eoffset < (Cutheight +0.1)){
+                    Pause_machine = 0;
+                    } else {Pause_machine = 1;}
+                }
+                state = CUTHEIGHT;
+            break; 
+            
+    case CUTHEIGHT:
+                state = TORCH_UP_DOWN;
+            break; 
+
+    case TORCH_UP_DOWN:
+            //Speed = Maxspeed;
+            if(Mesa && Arc_ok_in){
+                if(Mesa_raw_voltage < Cut_chart_voltage){
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    }
+                else if(Mesa_raw_voltage > Cut_chart_voltage){
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    }             
+                else if(Mesa_raw_voltage == Cut_chart_voltage){
+                    Offset = Axis_z_eoffset;
+                    } 
+                state = TORCH_STOP;                    
+                }
+
+            if(Parport && Arc_ok_in){
+                if(Torch_up){
+                    Offset = Axis_z_eoffset + Up_down_resolution;
+                    }
+                else if(Torch_down){
+                    Offset = Axis_z_eoffset - Up_down_resolution;
+                    }
+                else if(!Torch_down && !Torch_up){
+                    Offset = Axis_z_eoffset;  // stay stadey
+                    }
+                }
+
+            if(!Arc_ok_in){
+                    Pause_machine = 1;
+                    state = RESTART;
+                    } else {Pause_machine = 0;}
+ 
+                state = TORCH_STOP;                 
+            break;
+
+    case RESTART:
+            if(Enable_auto_restart && !Arc_ok_in){
+                Torch_on_out = 0;
+                Auto_restart_counter = Auto_restart_counter + 1; 
+                    if(Auto_restart_counter <= Auto_restart_times){ // restart.       
+                        state = TORCH_START;  // goto torch start procedure 
+                        }
+                } 
+            break;
+  
+    case TORCH_STOP:
+            if(!Torch_on_in){
+                Torch_on_out = 0;
+                Pause_machine = 1;
+                state = TRAVELHEIGHT;
+                }
+            break;
+
+
+
+    }
+}
