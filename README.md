@@ -30,6 +30,9 @@ Burn an iso cd. Download the iso here :
 http://www.linuxcnc.org/testing-stretch-rtpreempt/
 choose the 1.2 or 1.3 gb version, and you are on.
 
+Advise : first update the new installation with synaptic package manager before installing & compiling the 
+custom linuxcnc installation. Have fun !!
+
 If you do not already have git, install it by saying
 
 ## $ sudo apt-get install git
