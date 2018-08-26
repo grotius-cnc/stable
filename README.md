@@ -97,9 +97,7 @@ A g-code from inkscape can be used directly !!
 The adaptive feed and the round corners will be added the next github update, then this comment and g-code example
 will be modified.
 
-Install xlsxwriter with synaptic package manager, see linuxcnc system menu, this module for the plasma excel file based tool lists, or type in terminal :
-
-# sudo apt-get install xlsxwriter
+Install xlsxwriter with synaptic package manager, see linuxcnc system menu, this module for the plasma excel file based tool lists.
 
 
 
