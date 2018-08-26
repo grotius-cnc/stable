@@ -17,10 +17,6 @@ take any responsibility for such compliance.**
 This software is released under the GPLv2, with some parts under the LGPL.
 See the file COPYING for more details.
 
-
-# The Build Process
-
-
 Building LinuxCNC From Source
 Kurt Jacobson edited this page on May 30 · 10 revisions
 Michel Wijnja edited this page on August 19, 2018, multiple revisions
@@ -31,54 +27,54 @@ Install git
 
 If you do not already have git, install it by saying
 
-# $ sudo apt-get install git
+## $ sudo apt-get install git
 Building LinuxCNC
 Get the source code
 
 Open a terminal where you would like to build LinuxCNC. I use ~/sources, to keep things neat, but you can put it wherever you like. Then clone the LinuxCNC repository by saying
 
-# git clone https://github.com/michelwijnja/external_offsets_adaptive_feed.git linuxcnc-grotius
+## git clone https://github.com/michelwijnja/external_offsets_adaptive_feed.git linuxcnc-grotius
 
 Then enter the new directory
 
-# cd linuxcnc-grotius
-# cd debian
-# ./configure uspace
+## cd linuxcnc-grotius
+## cd debian
+## ./configure uspace
 
 Install build dependencies
 
-# cd ..
-# dpkg-checkbuilddeps
+## cd ..
+## dpkg-checkbuilddeps
 
 Copy/paste each of the build deps then install with
-# sudo apt-get install <dep-name>
+## sudo apt-get install <dep-name>
 
 Check deps again
-# dpkg-checkbuilddeps
+## dpkg-checkbuilddeps
 
 Repeat until all of the dependencies are installed
 Configure
 
-# cd src
-# ./autogen.sh
-# ./configure
-# make -j2   (-j4 = quadcore, -j2 = dual core processor)
+## cd src
+## ./autogen.sh
+## ./configure
+## make -j2   (-j4 = quadcore, -j2 = dual core processor)
 
 Allow access to hardware
-# $ sudo make setuid
+## sudo make setuid
 Running LinuxCNC
 Setup the RIP environment
 
 Okey now goto the bin folder of your brand new linuxcnc run in place directory 
 and select the file "grotius" mark this file as executable, right mouse click and select option execute as program"
 
-$ . ../scripts/. ./rip-environment   
-# . ./rip-environment 
+Directory ../scripts/. ./rip-environment   
+## . ./rip-environment 
 
 You need to run this each time you open a new terminal.
 Launch LinuxCNC
 
-# linuxcnc
+## linuxcnc
 
 LinuxCNC will print the version that is running, check that it is what you expected.
 
@@ -89,20 +85,20 @@ For your g-code post processor :
 
 Your g-code file for usage with this linuxcnc version looks like :
 
-G21 (mm)
-
-M3 (start torch)
-M52 P1 (turn on adaptive feed)
-G64 P0.001 (we don't want rounded corners)
-G01 x0 y0
-G01 x100 y100
-m5 (stop torch)
+## G21 (mm)
+## M3 (start torch)
+## M52 P1 (turn on adaptive feed)
+## G64 P0.001 (we don't want rounded corners)
+## G01 x0 y0
+## G01 x100 y100
+## m5 (stop torch)
 
 A g-code from inkscape can be used directly !!
 The adaptive feed and the round corners will be added the next github update, then this comment and g-code example
 will be modified.
 
 Install xlsxwriter with synaptic package manager, see linuxcnc system menu, this module for the plasma excel file based tool lists, or type in terminal :
+
 # sudo apt-get install xlsxwriter
 
 
