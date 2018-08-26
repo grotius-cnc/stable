@@ -25,6 +25,11 @@ Introduction
 These are the steps to build a Run-In-Place (RIP) version of LinuxCNC from source. This is the best way to try out the LinuxCNC development branches as it does not effect any installed version of LinuxCNC. RIP also makes it very easy to rebuild LinuxCNC to include any modifications to the source. If you have modified a file, simply run make in the src directory to compile the changes. Only the modified files will be re-compiled, so it should make fast allowing for rapid iteration of changes.
 Install git
 
+My advise is, install first the 64 bit linuxcnc debian software.
+Burn an iso cd. Download the iso here :
+http://www.linuxcnc.org/testing-stretch-rtpreempt/
+choose the 1.2 or 1.3 gb version, and you are on.
+
 If you do not already have git, install it by saying
 
 ## $ sudo apt-get install git
