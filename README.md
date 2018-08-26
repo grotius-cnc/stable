@@ -33,7 +33,10 @@ choose the 1.2 or 1.3 gb version, and you are on.
 Advise : first update the new installation with synaptic package manager before installing & compiling the 
 custom linuxcnc installation. Have fun !!
 
-If you do not already have git, install it by saying
+After brand new install and update's start up a terminal.
+## $ = only for info. You type in terminal : sudo apt-get install git
+
+P.s. If you want to have root privileges in file explorer you type : sudo thunar
 
 ## $ sudo apt-get install git
 Building LinuxCNC
