@@ -33,6 +33,9 @@ choose the 1.2 or 1.3 gb version, and you are on.
 Advise : first update the new installation with synaptic package manager before installing & compiling the 
 custom linuxcnc installation. Have fun !!
 
+When installed and updated, search this and remove this with synaptic package manager :
+## openssh-server
+
 After brand new install and update's start up a terminal.
 
 $ = only for info. You type in terminal : sudo apt-get install git
