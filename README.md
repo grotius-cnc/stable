@@ -34,7 +34,8 @@ Advise : first update the new installation with synaptic package manager before 
 custom linuxcnc installation. Have fun !!
 
 After brand new install and update's start up a terminal.
-## $ = only for info. You type in terminal : sudo apt-get install git
+
+$ = only for info. You type in terminal : sudo apt-get install git
 
 P.s. If you want to have root privileges in file explorer you type : sudo thunar
 
