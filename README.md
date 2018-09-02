@@ -115,9 +115,29 @@ will be modified.
 Install xlsxwriter with synaptic package manager, see linuxcnc system menu, this module must be installed 
 for loading and writing the plasma excel file based tool lists.
 
+Search the file "grotius" located in the bin directory. Enable this file for execute as program, right mouseclick
+and check option's.
+
 To quick enable the machine press F2 (machine on, e-stop reset), F3 (Home all), F1 (Machine off) Esc (Quit linuxcnc)
 Keyboard moving axis is working. Keyboard arrows are x and y axis. Page up and down is z axis. Home and End is a axis.
 Have Funn !!
+
+To enable the glade-gtk2 editor :
+
+http://www.linuxcnc.org/dists/wheezy/base/
+
+for 32 bit :
+http://www.linuxcnc.org/dists/wheezy/base/binary-i386/libgladeui-1-11_3.8.0-0ubuntu6_i386.deb
+http://www.linuxcnc.org/dists/wheezy/base/binary-i386/glade-gtk2_3.8.0-0ubuntu6_i386.deb
+http://www.linuxcnc.org/dists/wheezy/base/binary-i386/glade-gnome_3.8.0-0ubuntu6_i386.deb
+for 64 bit :
+http://www.linuxcnc.org/dists/wheezy/base/binary-amd64/libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
+http://www.linuxcnc.org/dists/wheezy/base/binary-amd64/glade-gtk2_3.8.0-0ubuntu6_amd64.deb
+http://www.linuxcnc.org/dists/wheezy/base/binary-amd64/glade-gnome_3.8.0-0ubuntu6_amd64.deb
+
+Download and instal the files in terminal like :
+sudo dpkg -i libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
+Or install with Synaptic Package Manager
 
 
 
