@@ -13,6 +13,7 @@ any danger area.**
 safety codes, and the authors of this software can not, and do not,
 take any responsibility for such compliance.**
 
+# This linuxcnc version is specially designed for parport and mesa driven plasma machine's.
 
 This software is released under the GPLv2, with some parts under the LGPL.
 See the file COPYING for more details.
