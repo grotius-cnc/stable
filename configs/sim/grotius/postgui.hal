@@ -28,15 +28,16 @@ net  G:convert                  cvt.out                       axis.z.eoffset-cou
 
 setp axis.z.eoffset-enable      True
 
-net  G:Max_z_speed               ini.z.max_velocity           grotius_gui.Max_z_speed
-net  G:Max_z_acceleration        ini.z.max_acceleration       grotius_gui.Max_z_acceleration
-#setp ini.z.max_acceleration     500
-#setp ini.z.max_velocity         500
-
+net  THC2-Speed                 THC2.Speed                    ini.z.max_velocity            
+net  THC2-Maxspeed              THC2.Maxspeed                 grotius_gui.Max_z_speed
+net  THC2-Probespeed            THC2.Probespeed               grotius_gui.Probespeed
+net  THC2-Piercespeed           THC2.Piercespeed              grotius_gui.Piercespeed
+net  THC2-Max_acceleration      ini.z.max_acceleration        grotius_gui.Max_z_acceleration
+           
 net  THC2-Pause-machine         THC2.Pause-machine            motion.feed-inhibit         
-#net  THC2-Requestedspeed        THC2.current-vel              motion.current-vel     
-#net  THC2-Adaptive-feed         THC2.adaptive-feed            motion.adaptive-feed 
-
+#net  THC2-Requestedspeed        THC2.Current-vel              motion.current-vel     
+net  THC2-Adaptive-feed-in      THC2.Adaptive-feed-in         adaptive.adaptive-feed        
+net  THC2-Adaptive-feed-out     THC2.Adaptive-feed-out        motion.adaptive-feed 
 
 net  spindle-cw                 THC2.Torch-on-in  
 net  THC2-Enable                THC2.Enable                   grotius_gui.Enable
@@ -50,12 +51,10 @@ net  THC2-Torch-down            THC2.Torch-down               grotius_gui.Torch_
 net  THC2-Axis-z-eoffset        THC2.Axis-z-eoffset           axis.z.eoffset
 net  THC2-Up-down-resolution    THC2.Up-down-resolution       grotius_gui.Up_down_resolution
                   
-net  THC2-Travelheight          THC2.Travelheight             grotius_gui.Travel_height
-net  THC2-Cutheight             THC2.Cutheight                grotius_gui.Cut_height
-net  THC2-Pierceheight          THC2.Pierceheight             grotius_gui.Pierce_height
+net  THC2-Travelheight          THC2.Travelheight             grotius_gui.Travelheight
+net  THC2-Cutheight             THC2.Cutheight                grotius_gui.Cutheight
+net  THC2-Pierceheight          THC2.Pierceheight             grotius_gui.Pierceheight
 net  THC2-Piercedelay           THC2.Piercedelay              grotius_gui.Pierce_delay
-#et  THC2-Piercespeed           THC2.Piercespeed              grotius_gui.Pierce_speed
-#et  THC2-Maxspeed              THC2.Maxspeed                 grotius_gui.Max_z_speed
 net  THC2-Probe-enable          THC2.Probe-enable             grotius_gui.Probe_enable
 net  THC2-Parport-select        THC2.Parport                  grotius_gui.Parport
 net  THC2-Mesa-select           THC2.Mesa                     grotius_gui.Mesa
@@ -73,9 +72,8 @@ net  THC2-Axis_y_pos_cmd        THC2.Axis-y-pos-cmd           axis.y.pos-cmd
 net  THC2-Dist-x                THC2.Dist-x                   grotius_gui.Dist_x
 net  THC2-Dist-y                THC2.Dist-y                   grotius_gui.Dist_y        
 
-net  THC2-probe-over-distance   THC2.Probe-over-distance-yes  grotius_gui.Probe_next_xy  
-
-
+net  THC2-Probe-over-distance   THC2.Probe-over-distance-yes  grotius_gui.Probe_next_xy  
+net  THC2-Auto-restart-times    THC2.Auto-restart-times       grotius_gui.Auto_restart_times
 
 
 
