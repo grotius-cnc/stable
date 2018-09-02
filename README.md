@@ -115,6 +115,10 @@ will be modified.
 Install xlsxwriter with synaptic package manager, see linuxcnc system menu, this module must be installed 
 for loading and writing the plasma excel file based tool lists.
 
+To quick enable the machine press F2 (machine on, e-stop reset), F3 (Home all), F1 (Machine off) Esc (Quit linuxcnc)
+Keyboard moving axis is working. Keyboard arrows are x and y axis. Page up and down is z axis. Home and End is a axis.
+Have Funn !!
+
 
 
 
