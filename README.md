@@ -100,13 +100,12 @@ For your g-code post processor :
 
 Your g-code file for usage with this linuxcnc version looks like :
 
-## G21 (mm)
-## M3 (start torch)
-## M52 P1 (turn on adaptive feed)
-## G64 P0.001 (we don't want rounded corners)
-## G01 x0 y0
-## G01 x100 y100
-## m5 (stop torch)
+ G21 (Units: Metric)
+ G40 G90 G64P0.01
+ F1 S1
+ M52 P1
+ M3 (start torch)
+ M5 (stop torch)
 
 A g-code from inkscape can be used directly !!
 The adaptive feed and the round corners will be added the next github update, then this comment and g-code example
