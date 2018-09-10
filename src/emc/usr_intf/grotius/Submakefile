@@ -1,10 +1,8 @@
-
-
 GROTIUS_MODULES = keybindings widgets
 
 PYTARGETS += ../bin/grotius ../lib/python/grotius/__init__.py $(patsubst %,../lib/python/grotius/%.py,$(GROTIUS_MODULES)) \
 	../share/linuxcnc/grotius.glade 
-  
+
 PYI18NSRCS += emc/usr_intf/grotius/grotius.py $(patsubst %,emc/usr_intf/grotius/%.py,$(GROTIUS_MODULES)) \
 	emc/usr_intf/grotius/grotius.glade 
 
