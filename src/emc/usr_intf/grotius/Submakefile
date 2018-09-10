@@ -1,6 +1,6 @@
 
 
-GSCREEN_MODULES = keybindings widgets
+GROTIUS_MODULES = keybindings widgets
 
 PYTARGETS += ../bin/grotius ../lib/python/grotius/__init__.py $(patsubst %,../lib/python/grotius/%.py,$(GROTIUS_MODULES)) \
 	../share/linuxcnc/grotius.glade 
