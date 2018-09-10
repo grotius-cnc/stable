@@ -26,6 +26,8 @@ class Keycalls:
         self.ZNEG = 'on_keycall_ZNEG'
         self.APOS = 'on_keycall_APOS'
         self.ANEG = 'on_keycall_ANEG'
+        self.BPOS = 'on_keycall_BPOS'
+        self.BNEG = 'on_keycall_BNEG'
         self.INCREMENTS = 'on_keycall_INCREMENTS'
         self.TEST = 'on_keycall_INCREMENTS'
 
@@ -48,8 +50,10 @@ class Keybinding:
         self.Left = 'XNEG'
         self.Page_Up = 'ZPOS'
         self.Page_Down = 'ZNEG'
-        self.bracketleft = 'APOS'
-        self.bracketright = 'ANEG'
+        self.Home = 'APOS'
+        self.End = 'ANEG'
+        self.Insert = 'BPOS'
+        self.Delete = 'BNEG'
         self.i = 'INCREMENTS'
         self.I = 'INCREMENTS'
 
