@@ -82,7 +82,8 @@ Running LinuxCNC
 Setup the RIP environment
 
 Okey now goto the bin folder of your brand new linuxcnc run in place directory 
-and select the file "grotius" mark this file as executable, right mouse click and select option execute as program"
+and select the file "grotius.py" 
+Rename the file to "grotius" and mark this file as executable, right mouse click and select option execute as program"
 
 Directory ../scripts/. ./rip-environment   
 ## . ./rip-environment 
