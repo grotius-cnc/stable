@@ -22,6 +22,7 @@ import hal, time
 import xlsxwriter
 from grotius import widgets 
 from grotius import keybindings
+from grotius import test
 
 try:
     # path to TCL for external programs only needed for halshow button
