@@ -96,7 +96,6 @@ class grotius_gui(object):
     self.widgets.Parport.set_active(True)
     self.widgets.Probe_enable.set_active(True)
 
-
 #    self.keylookup = keybindings.Keylookup()
 #    self.init_keybinding_pref()
 
@@ -158,10 +157,6 @@ class grotius_gui(object):
             self.c.state(self.cnc.STATE_ON) 
             return True
 
-
-
-
-
   # FUNCTION 4 KEY 
   def on_keycall_HALMETER(self,state,SHIFT,CNTRL,ALT):
         if state:
@@ -200,7 +195,6 @@ class grotius_gui(object):
             self.on_y_min_released(state)
             return True
 
-
   def on_keycall_ZPOS(self,state,SHIFT,CNTRL,ALT):
         if state == 1:
             self.on_z_plus_pressed(state)
@@ -237,7 +231,6 @@ class grotius_gui(object):
         if state:
             self.on_home_all_pressed(None)
             return True
-
 
   #######################################################
 
@@ -312,16 +305,17 @@ class grotius_gui(object):
       worksheet.write('A26', 'Cut Chart Voltage')
       worksheet.write('B26', self.widgets.Cut_chart_voltage.get_value())
 
-
       # Write some numbers, with row/column notation.
       #worksheet.write(2, 1, 123)
       #worksheet.write(3, 1, 123.456)
       workbook.close()
 
   def on_save_settings_as_pressed(self, widget, data=None):
-      value = self.widgets.Travel_height.get_value()
+      value = self.widgets.Travelheight.get_value()
       print(value)
-      f= open("plasma_tools.txt","w+")
+      #f= open("plasma_tools.txt","w+")
+      x = self.widgets.entry.get_text()
+      f=open(x, "w+")
       f.write("Travelheight\r\n")
       f.write("%d\r\n" % (value))
       f.close() 
@@ -331,9 +325,9 @@ class grotius_gui(object):
      f=open(x, "r")
      if f.mode == 'r':
         content =f.readlines()
-        print content[0] # actual line 1 in file.
-     y = float(content[0])
-     self.widgets.Travel_height.set_value(y)    
+        print content[1] # actual line 2 in file.
+        y = float(content[1])
+        self.widgets.Travelheight.set_value(y)    
 
   def periodic(self): 
      self.s.poll()
@@ -348,7 +342,6 @@ class grotius_gui(object):
      elif not self.s.estop:
         self.widgets.machine_on_button.set_image(self.widgets.orange)
      return True
-
 
   def on_emergency_stop_pressed(self, widget, data=None):
     #self.c.abort()
@@ -681,39 +674,15 @@ class grotius_gui(object):
     self.s.poll()
     if not self.s.estop and self.s.enabled:
        self.c.mode(self.cnc.MODE_MANUAL)
-       #self.c.wait_complete(1)
 
        # 1:teleop, 0: joint
        self.c.teleop_enable(0)
-       #self.c.wait_complete()
-
-       #self.c.home(0) 
-       #self.c.wait_complete()
-       #self.c.home(2) 
-       #self.c.wait_complete()
-       #self.c.home(3) 
-       #self.c.wait_complete()
-       #self.c.home(4)   
-       #self.c.wait_complete()
        self.c.home(-1) 
-       #self.c.wait_complete(1)
-
-    #if self.s.homed:
-    # Turn on Adaptive feed
-    #   self.c.mode(self.cnc.MODE_MDI)
-    #   self.c.wait_complete(1)
-    #   command = "M52 P1"              
-    #   self.c.mdi(command)
-
        self.widgets.gremlin.clear_live_plotter()  
        print " home all "
           
-
     if self.s.estop and not self.s.enabled:
        print " can not home all, machine in E-stop or not enabled "
-    
-    #if self.s.homed:
-       
 
   def on_jog_speed_value_changed(self, widget, data=None):
     x = self.widgets.jog_speed.get_value()
@@ -777,7 +746,6 @@ class grotius_gui(object):
         return getattr(self, item)
   def __setitem__(self, item, value):
         return setattr(self, item, value)
-
 
   def report_gcode_error(self, result, seq, filename):
     import gcode
