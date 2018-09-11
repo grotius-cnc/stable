@@ -432,10 +432,8 @@ TARGETS += ../bin/halshow
 	$(Q)(echo "source $(EMC2_TCL_LIB_DIR)/bin/halshow.tcl")>>$@
 	$(Q)chmod +x $@
 	
-# grotius as standalone app:
-TARGETS += ../bin/grotius
-../bin/grotius: Makefile
-        $(Q)chmod +x $@ 
+# Grotius python file make executable
+$../bin/chmod +x grotius$@ 
 
 # And make userspace depend on $(TARGETS)
 userspace: $(TARGETS)
