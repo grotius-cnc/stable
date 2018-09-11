@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 import sys, os
-BASE = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
-libdir = os.path.join(BASE, "lib", "python")
-datadir = os.path.join(BASE, "share", "linuxcnc")
-imagedir = os.path.join(BASE, "share", "linuxcnc")
-sys.path.insert(0, libdir)
-xmlname = os.path.join(datadir,"grotius.glade")
 
+BASE = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), ".."))
+DATADIR = os.path.join(BASE, "share", "linuxcnc")
+IMAGEDIR = os.path.join(BASE, "share", "linuxcnc")
+LOCALEDIR = os.path.join(BASE, "share", "locale")
+XMLNAME = os.path.join(DATADIR,"grotius.glade")
 
 import sys
 import math 
@@ -19,9 +18,15 @@ import gremlin
 import gladevcp.makepins
 import gobject
 import hal, time
-from gmoccapy import widgets 
 import xlsxwriter
-from gscreen import keybindings
+
+
+libdir = os.path.join(BASE, "lib", "python")
+sys.path.insert(0, libdir)
+#import widgets 
+from grotius import keybindings
+from grotius import widgets 
+#from gscreen import keybindings
 
 try:
     # path to TCL for external programs only needed for halshow button
@@ -39,7 +44,7 @@ class grotius_gui(object):
   def __init__(self, inifile):
 
     self.builder = gtk.Builder()
-    self.builder.add_from_file(xmlname)
+    self.builder.add_from_file(XMLNAME)
     self.builder.connect_signals(self)
     self.version = os.environ['LINUXCNCVERSION']
     self.ini_file_path = os.environ['INI_FILE_NAME']
@@ -51,7 +56,7 @@ class grotius_gui(object):
     self.s = linuxcnc.stat()
     self.error = linuxcnc.error_channel()
     self.halcomp = hal.component("grotius_gui")
-    self.panel = gladevcp.makepins.GladePanel(self.halcomp, xmlname, self.builder, None)
+    self.panel = gladevcp.makepins.GladePanel(self.halcomp, XMLNAME, self.builder, None)
     self.halcomp.ready()
     self.window = self.builder.get_object('main_window')
     self.window.set_title("LINUXCNC build by Grotius CNC Machines B.V.")
