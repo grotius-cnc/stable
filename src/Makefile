@@ -435,7 +435,7 @@ TARGETS += ../bin/halshow
 # grotius as standalone app:
 TARGETS += ../bin/grotius
 ../bin/grotius: Makefile
-        $(Q)chmod +x $@
+        $ chmod +x 
 
 # And make userspace depend on $(TARGETS)
 userspace: $(TARGETS)
