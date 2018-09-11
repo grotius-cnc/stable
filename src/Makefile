@@ -435,10 +435,7 @@ TARGETS += ../bin/halshow
 # grotius as standalone app:
 TARGETS += ../bin/grotius
 ../bin/grotius: Makefile
-	$(Q)rm -f $@
-	$(Q)(echo "#!$(TCLSH)")>|$@
-	$(Q)(echo "source $(EMC2_TCL_LIB_DIR)/bin/grotius")>>$@
-	$(Q)chmod +x $@
+        $(Q)chmod +x $@
 
 # And make userspace depend on $(TARGETS)
 userspace: $(TARGETS)
