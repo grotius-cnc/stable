@@ -431,9 +431,6 @@ TARGETS += ../bin/halshow
 	$(Q)(echo "#!$(TCLSH)")>|$@
 	$(Q)(echo "source $(EMC2_TCL_LIB_DIR)/bin/halshow.tcl")>>$@
 	$(Q)chmod +x $@
-	
-# Grotius python file make executable
-$../bin/chmod +x grotius$@ 
 
 # And make userspace depend on $(TARGETS)
 userspace: $(TARGETS)
