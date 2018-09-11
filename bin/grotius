@@ -19,9 +19,9 @@ import gremlin
 import gladevcp.makepins
 import gobject
 import hal, time
-from gmoccapy import widgets 
 import xlsxwriter
-from gscreen import keybindings
+from grotius import widgets 
+from grotius import keybindings
 
 try:
     # path to TCL for external programs only needed for halshow button
