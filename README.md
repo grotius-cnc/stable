@@ -148,6 +148,37 @@ sudo dpkg -i libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
 Or install with Synaptic Package Manager
 
 
+How i installed a brand new pc today :
+Burn and install the iso cd debian stretch 64 bit : http://www.linuxcnc.org/testing-stretch-rtpreempt/linuxcnc-stretch-uspace-amd64-r11.iso
 
+terminal :
+
+1. sudo apt-get install git
+2. git install https://github.com/michelwijnja/external_offsets_adaptive_feed.git linux_grotius
+3. sudo apt-get install debhelper tcl8.6-dev tk8.6-dev libreadline-gplv2-dev asciidoc
+4. sudo apt-get install dblatex docbook-xsl dvipng graphviz groff inkscape python-lxml source-highlight texlive-extra-utils 
+5. sudo apt-get install texlive-font-utils texlive-fonts-recommended texlive-lang-cyrillic texlive-lang-french texlive-lang-german 
+6. sudo apt-get install texlive-lang-polish texlive-lang-spanish texlive-latex-recommended w3c-linkchecker xsltproc asciidoc-dblatex 
+7. sudo apt-get install python-dev libxmu-dev libglu1-mesa-dev libgl1-mesa-dev libgtk2.0-dev gettext intltool 
+8. sudo apt-get install autoconf libboost-python-dev netcat libmodbus-dev libusb-1.0-0-dev 
+9. sudo apt-get install python-xlsxwriter
+
+Make file in linux_grotius, bin folder, grotius => executable.
+
+10. cd src
+11. ./autogen.sh
+12. ./configure
+13. make -j2
+14. sudo make setuid
+15. cd ..
+16. cd scripts
+17. . ./rip-environment
+19. linuxcnc
+20. select grotius and make desktop shortcut
+21. grotius desktop shortcut, select run in terminal
+22. Look for parport adres : type in terminal : dmesg | grep par
+23. Change the grotius.hal file with the correct parport adres, in my case : 0xe050
+24. The complete line in grotius.hal = loadrt hal_parport cfg="0x1110 out 0x1120 out"  (second parport is not used but has not to be deleted)
+25. Ready.
 
 
