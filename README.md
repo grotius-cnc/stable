@@ -123,7 +123,7 @@ To quick enable the machine press F2 (machine on, e-stop reset), F3 (Home all), 
 Keyboard moving axis is working. Keyboard arrows are x and y axis. Page up and down is z axis. Home and End is a axis.
 Have Funn !!
 
-To enable the glade-gtk2 editor :
+To enable the linuxcnc glade-gtk2 widget's in Ubuntu / Mint / Kali, etc. you have to install a little bit more file's :
 
 http://www.linuxcnc.org/dists/wheezy/base/
 
@@ -148,7 +148,7 @@ sudo dpkg -i libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
 Or install with Synaptic Package Manager
 
 
-How i installed a brand new pc today :
+How i installed a brand new pc today 15 September 2018 :
 Burn and install the iso cd debian stretch 64 bit : http://www.linuxcnc.org/testing-stretch-rtpreempt/linuxcnc-stretch-uspace-amd64-r11.iso
 
 terminal :
