@@ -2906,7 +2906,7 @@
                                 <property name="use_action_appearance">False</property>
                                 <signal name="pressed" handler="on_machine_on_button_pressed" swapped="no"/>
                                 <child>
-                                  <object class="GtkImage" id="image1">
+                                  <object class="GtkImage" id="red">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="pixbuf">red.png</property>
