@@ -167,23 +167,25 @@ terminal :
 7. sudo apt-get install python-dev libxmu-dev libglu1-mesa-dev libgl1-mesa-dev libgtk2.0-dev gettext intltool 
 8. sudo apt-get install autoconf libboost-python-dev netcat libmodbus-dev libusb-1.0-0-dev 
 9. sudo apt-get install python-xlsxwriter
+10. sudo apt-get install glade
+11. sudo apt-get install geanny
 
 Make file in linux_grotius, bin folder, grotius => executable.
 
-10. cd src
-11. ./autogen.sh
-12. ./configure
-13. make -j2
-14. sudo make setuid
-15. cd ..
-16. cd scripts
-17. . ./rip-environment
-19. linuxcnc
-20. select grotius and make desktop shortcut
-21. grotius desktop shortcut, select run in terminal
-22. Look for parport adres : type in terminal : dmesg | grep par
-23. Change the grotius.hal file with the correct parport adres, in my case : 0xe050
-24. The complete line in grotius.hal = loadrt hal_parport cfg="0x1110 out 0x1120 out"  (second parport is not used but has not to be deleted)
-25. Ready.
+12. cd src
+13. ./autogen.sh
+14. ./configure
+15. make -j2
+16. sudo make setuid
+17. cd ..
+18. cd scripts
+19. . ./rip-environment
+20. linuxcnc
+21. select grotius and make desktop shortcut
+22. grotius desktop shortcut, select run in terminal
+23. Look for parport adres : type in terminal : dmesg | grep par
+24. Change the grotius.hal file with the correct parport adres, in my case : 0xe050
+25. The complete line in grotius.hal = loadrt hal_parport cfg="0x1110 out 0x1120 out"  (second parport is not used but has not to be deleted)
+26. Ready.
 
 
