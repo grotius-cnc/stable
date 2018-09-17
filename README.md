@@ -147,8 +147,11 @@ First maybe install glade and geanny :
 sudo apt-get install glade
 sudo apt-get install geanny
 Install the files in terminal like :
+
 sudo dpkg -i libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
+
 sudo dpkg -i glade-gtk2_3.8.0-0ubuntu6_amd64.deb
+
 sudo dpkg -i glade-gnome_3.8.0-0ubuntu6_amd64.deb
 
 Or you can also install files with Synaptic Package Manager.
