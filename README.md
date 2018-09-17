@@ -154,7 +154,8 @@ sudo dpkg -i glade-gtk2_3.8.0-0ubuntu6_amd64.deb
 
 sudo dpkg -i glade-gnome_3.8.0-0ubuntu6_amd64.deb
 
-Sometimes the terminal say's you have to fix broken packages :
+Sometimes the terminal say's you have to fix broken packages, this is only for glade installation :
+
 type : sudo apt --fix-broken install
 
 
