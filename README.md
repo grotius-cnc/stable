@@ -154,6 +154,10 @@ sudo dpkg -i glade-gtk2_3.8.0-0ubuntu6_amd64.deb
 
 sudo dpkg -i glade-gnome_3.8.0-0ubuntu6_amd64.deb
 
+Sometimes the terminal say's you have to fix broken packages :
+type : sudo apt --fix-broken install
+
+
 Or you can also install files with Synaptic Package Manager.
 
 How i installed a brand new pc today 15 September 2018 :
