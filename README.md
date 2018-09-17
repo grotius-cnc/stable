@@ -168,7 +168,7 @@ terminal :
 8. sudo apt-get install autoconf libboost-python-dev netcat libmodbus-dev libusb-1.0-0-dev 
 9. sudo apt-get install python-xlsxwriter
 10. sudo apt-get install glade
-11. sudo apt-get install geanny
+11. sudo apt-get install geany
 
 Make file in linux_grotius, bin folder, grotius => executable.
 
