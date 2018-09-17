@@ -143,10 +143,15 @@ http://www.linuxcnc.org/dists/wheezy/base/binary-amd64/glade-gtk2_3.8.0-0ubuntu6
 
 http://www.linuxcnc.org/dists/wheezy/base/binary-amd64/glade-gnome_3.8.0-0ubuntu6_amd64.deb
 
-Download and instal the files in terminal like :
+First maybe install glade and geanny :
+sudo apt-get install glade
+sudo apt-get install geanny
+Install the files in terminal like :
 sudo dpkg -i libgladeui-1-11_3.8.0-0ubuntu6_amd64.deb
-Or install with Synaptic Package Manager
+sudo dpkg -i glade-gtk2_3.8.0-0ubuntu6_amd64.deb
+sudo dpkg -i glade-gnome_3.8.0-0ubuntu6_amd64.deb
 
+Or you can also install files with Synaptic Package Manager.
 
 How i installed a brand new pc today 15 September 2018 :
 Burn and install the iso cd debian stretch 64 bit : http://www.linuxcnc.org/testing-stretch-rtpreempt/linuxcnc-stretch-uspace-amd64-r11.iso
