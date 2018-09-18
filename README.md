@@ -197,9 +197,13 @@ Make file in linux_grotius, bin folder, grotius => executable.
 26. Ready.
 
 For changing background color in geany :
+
 1-Click Edit
+
 2-Click Preferences
+
 3-Click Editor
+
 4-And finally click checkbox “invert syntax highlighting colors”
 
 
