@@ -196,4 +196,10 @@ Make file in linux_grotius, bin folder, grotius => executable.
 25. The complete line in grotius.hal = loadrt hal_parport cfg="0x1110 out 0x1120 out"  (second parport is not used but has not to be deleted)
 26. Ready.
 
+For changing background color in geany :
+1-Click Edit
+2-Click Preferences
+3-Click Editor
+4-And finally click checkbox “invert syntax highlighting colors”
+
 
