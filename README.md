@@ -203,4 +203,14 @@ For changing background color in geany :
 3. Click Editor
 4. And finally click checkbox “invert syntax highlighting colors”
 
+To install a component :
+
+Component location direcory : src / hal / components
+
+In terminal : sudo halcompile --install THC2.comp
+
+Then copy the component to the linuxcnc rip-location :
+
+copy THC2.comp from /usr/lib/linuxcnc/modules/ to linuxcnc-grotius/rtlib
+
 
