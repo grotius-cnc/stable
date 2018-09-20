@@ -49,7 +49,7 @@ Get the source code
 
 Open a terminal where you would like to build LinuxCNC. I use ~/sources, to keep things neat, but you can put it wherever you like. Then clone the LinuxCNC repository by saying
 
-## git clone https://github.com/michelwijnja/external_offsets_adaptive_feed.git linuxcnc-grotius
+## git clone https://github.com/michelwijnja/Linuxcnc_grotius_stable.git linuxcnc-grotius
 
 Then enter the new directory
 
