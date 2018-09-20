@@ -26,58 +26,58 @@ Introduction
 These are the steps to build a Run-In-Place (RIP) version of LinuxCNC from source. This is the best way to try out the LinuxCNC development branches as it does not effect any installed version of LinuxCNC. RIP also makes it very easy to rebuild LinuxCNC to include any modifications to the source. If you have modified a file, simply run make in the src directory to compile the changes. Only the modified files will be re-compiled, so it should make fast allowing for rapid iteration of changes.
 Install git
 
-My advise is, install first the 64 bit linuxcnc debian software.
+My advise is, install first the 32 or 64 bit linuxcnc debian software.
 Burn an iso cd. Download the iso here :
 http://www.linuxcnc.org/testing-stretch-rtpreempt/
-choose the 1.2 or 1.3 gb version, and you are on.
 
-Advise : first update the new installation with synaptic package manager before installing & compiling the 
-custom linuxcnc installation. Have fun !!
+32 bit iso for older pc's : http://www.linuxcnc.org/testing-stretch-rtpreempt/linuxcnc-stretch-uspace-i386-r11.iso     
+64 bit iso for newer pc's : http://www.linuxcnc.org/testing-stretch-rtpreempt/linuxcnc-stretch-uspace-amd64-r11.iso
+
+During installation of iso, keep your internet connection for auto update.
 
 When installed and updated, search this and remove this with synaptic package manager :
-## openssh-server
+# openssh-server
 
-After brand new install and update's start up a terminal.
+After brand new install start up a terminal.
 
-$ = only for info. You type in terminal : sudo apt-get install git
+in terminal you copy and past :   sudo apt-get install git
 
 P.s. If you want to have root privileges in file explorer you type : sudo thunar
 
-## $ sudo apt-get install git
+# sudo apt-get install git
 Building LinuxCNC
 Get the source code
 
 Open a terminal where you would like to build LinuxCNC. I use ~/sources, to keep things neat, but you can put it wherever you like. Then clone the LinuxCNC repository by saying
 
-## git clone https://github.com/michelwijnja/Linuxcnc_grotius_stable.git linuxcnc-grotius
+# git clone https://github.com/michelwijnja/Linuxcnc_grotius_stable.git linuxcnc-grotius
 
 Then enter the new directory
 
-## cd linuxcnc-grotius
-## cd debian
-## ./configure uspace
+# cd linuxcnc-grotius
+# cd debian
+# ./configure uspace
 
 Install build dependencies
 
-## cd ..
-## dpkg-checkbuilddeps
+# cd ..
+# dpkg-checkbuilddeps
 
 Copy/paste each of the build deps then install with
-## sudo apt-get install <dep-name>
-
+# sudo apt-get install <dep-name>
+For example : sudo apt-get install glade
 Check deps again
-## dpkg-checkbuilddeps
+# dpkg-checkbuilddeps
 
 Repeat until all of the dependencies are installed
-Configure
 
-## cd src
-## ./autogen.sh
-## ./configure
-## make -j2   (-j4 = quadcore, -j2 = dual core processor)
+# cd src
+# ./autogen.sh
+# ./configure
+# make -j2   (-j4 = quadcore, -j2 = dual core processor)
 
 Allow access to hardware
-## sudo make setuid
+# sudo make setuid
 Running LinuxCNC
 Setup the RIP environment
 
@@ -86,12 +86,12 @@ and select the file "grotius.py"
 Rename the file to "grotius" and mark this file as executable, right mouse click and select option execute as program"
 
 Directory ../scripts/. ./rip-environment   
-## . ./rip-environment 
+# . ./rip-environment 
 
 You need to run this each time you open a new terminal.
 Launch LinuxCNC
 
-## linuxcnc
+# linuxcnc
 
 LinuxCNC will print the version that is running, check that it is what you expected.
 
@@ -205,12 +205,9 @@ For changing background color in geany :
 
 To install a component :
 
-Component location direcory : src / hal / components
-
-In terminal : sudo halcompile --install THC2.comp
-
-Then copy the component to the linuxcnc rip-location :
-
-copy THC2.comp from /usr/lib/linuxcnc/modules/ to linuxcnc-grotius/rtlib
+1. Component location direcory : src / hal / components
+2. In terminal : sudo halcompile --install THC2.comp
+3. Then copy the component to the linuxcnc rip-location :
+4. Copy THC2.comp from /usr/lib/linuxcnc/modules/ to linuxcnc-grotius/rtlib
 
 
