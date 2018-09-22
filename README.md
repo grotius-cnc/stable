@@ -210,4 +210,12 @@ To install a component :
 3. Then copy the component to the linuxcnc rip-location :
 4. Copy THC2.comp from /usr/lib/linuxcnc/modules/ to linuxcnc-grotius/rtlib
 
+Install drafsight 64 bit on amd64 architecture :
+download package : https://www.3ds.com/?eID=3ds_brand_download&uid=41&pidDown=13426&L=0
+open terminal in download folder and type : sudo dpkg -i draftSight.deb
+
+
+
+
+
 
